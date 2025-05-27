@@ -1,3 +1,4 @@
+
 import { v4 as uuidv4 } from 'uuid';
 
 // Types for analysis results
@@ -10,14 +11,11 @@ export interface AnalysisResults {
   confidence: number;
 }
 
-// Simulated API endpoint for disease analysis
-const API_ENDPOINT = 'https://api.pancrescan.ai/v1/analyze';
-
 export const analyzeImage = async (file: File): Promise<AnalysisResults> => {
   try {
     // In a real implementation, this would be an actual API call
     // For demo, we'll simulate an API response with realistic variations
-    const response = await simulateApiCall(file);
+    const response = await simulateApiCall();
     return response;
   } catch (error) {
     console.error('Analysis error:', error);
@@ -25,13 +23,12 @@ export const analyzeImage = async (file: File): Promise<AnalysisResults> => {
   }
 };
 
-const simulateApiCall = async (file: File): Promise<AnalysisResults> => {
+const simulateApiCall = async (): Promise<AnalysisResults> => {
   // Simulate API processing time
   await new Promise(resolve => setTimeout(resolve, 2000));
 
   // Generate realistic probabilities based on image analysis patterns
-  const baseProb = Math.random();
-  const probabilities = generateRealisticProbabilities(baseProb);
+  const probabilities = generateRealisticProbabilities();
 
   return {
     analysisId: uuidv4().substring(0, 8),
@@ -43,7 +40,7 @@ const simulateApiCall = async (file: File): Promise<AnalysisResults> => {
   };
 };
 
-const generateRealisticProbabilities = (baseProbability: number): Record<string, number> => {
+const generateRealisticProbabilities = (): Record<string, number> => {
   // Simulate more realistic probability distributions
   const primaryDisease = Math.random() > 0.5 ? 'acute_pancreatitis' : 'pancreatic_cysts';
   const probabilities: Record<string, number> = {

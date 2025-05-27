@@ -1,10 +1,10 @@
+
 import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Download, Share, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp } from 'lucide-react';
+import { Download, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp } from 'lucide-react';
 import HeatmapViewer from '../components/results/HeatmapViewer';
 import { generatePdfReport } from '../services/pdfService';
 import { chatbotRespond } from '../services/chatbotService';
-import { Chart } from '../components/results/Chart';
 
 interface ChatMessage {
   id: string;
@@ -134,21 +134,21 @@ const ResultsPage: React.FC = () => {
                   <div 
                     key={disease} 
                     className="flex flex-col items-center w-16 group relative"
-                    title={`${formatDiseaseName(disease)}: ${(probability * 100).toFixed(1)}%`}
+                    title={`${formatDiseaseName(disease)}: ${((probability as number) * 100).toFixed(1)}%`}
                   >
                     <div className="w-8 bg-gray-100 rounded-t-lg overflow-hidden" style={{ height: '200px' }}>
                       <div 
                         className="w-full transition-all duration-500"
                         style={{ 
-                          height: `${probability * 100}%`,
-                          marginTop: `${100 - (probability * 100)}%`,
-                          backgroundColor: probability > 0.5 ? '#ef4444' : 
-                                         probability > 0.25 ? '#f59e0b' : '#22c55e'
+                          height: `${(probability as number) * 100}%`,
+                          marginTop: `${100 - ((probability as number) * 100)}%`,
+                          backgroundColor: (probability as number) > 0.5 ? '#ef4444' : 
+                                         (probability as number) > 0.25 ? '#f59e0b' : '#22c55e'
                         }}
                       ></div>
                     </div>
                     <span className="mt-2 text-sm font-medium text-gray-900">
-                      {(probability * 100).toFixed(1)}%
+                      {((probability as number) * 100).toFixed(1)}%
                     </span>
                     <span className="mt-1 text-xs text-gray-600 text-center">
                       {formatDiseaseName(disease).split(' ').map((word, i) => (
@@ -159,7 +159,7 @@ const ResultsPage: React.FC = () => {
                     {/* Tooltip */}
                     <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <div className="bg-gray-900 text-white text-sm rounded px-2 py-1 whitespace-nowrap">
-                        {formatDiseaseName(disease)}: {(probability * 100).toFixed(1)}%
+                        {formatDiseaseName(disease)}: {((probability as number) * 100).toFixed(1)}%
                       </div>
                     </div>
                   </div>
@@ -175,10 +175,10 @@ const ResultsPage: React.FC = () => {
                   <h3 className="font-medium text-gray-900">
                     {formatDiseaseName(Object.entries(results.probabilities)
                       .reduce((min, [disease, prob]) => 
-                        prob < min[1] ? [disease, prob] : min, ['', 1])[0])}
+                        (prob as number) < (min[1] as number) ? [disease, prob] : min, ['', 1])[0])}
                   </h3>
                   <p className="text-2xl font-bold text-green-600">
-                    {(Math.min(...Object.values(results.probabilities)) * 100).toFixed(1)}%
+                    {(Math.min(...Object.values(results.probabilities).map(p => p as number)) * 100).toFixed(1)}%
                   </p>
                 </div>
                 <div className="p-4 rounded-lg border border-gray-200">
@@ -218,8 +218,7 @@ const ResultsPage: React.FC = () => {
                 <div className="relative">
                   <HeatmapViewer 
                     originalImage={imageUrl} 
-                    showHeatmap={showHeatmap} 
-                    heatmapData={results.heatmapData}
+                    showHeatmap={showHeatmap}
                   />
                   <div className="mt-4">
                     <button

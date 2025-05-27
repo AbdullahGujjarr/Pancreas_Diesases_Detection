@@ -1,15 +1,14 @@
+
 import React, { useEffect, useRef } from 'react';
 
 interface HeatmapViewerProps {
   originalImage: string;
   showHeatmap: boolean;
-  heatmapData: number[][];
 }
 
 const HeatmapViewer: React.FC<HeatmapViewerProps> = ({ 
   originalImage, 
-  showHeatmap,
-  heatmapData
+  showHeatmap
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const originalImageRef = useRef<HTMLImageElement | null>(null);

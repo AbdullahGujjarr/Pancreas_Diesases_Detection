@@ -80,7 +80,7 @@ export const generatePdfReport = async (
   };
   
   // Draw probability bars
-  Object.entries(results.probabilities).forEach(([disease, probability], index) => {
+  Object.entries(results.probabilities).forEach(([disease, probability]) => {
     // Disease name
     doc.setFontSize(11);
     doc.setTextColor(60, 60, 60);
@@ -153,7 +153,7 @@ export const generatePdfReport = async (
   currentY += splitText.length * 5 + 10;
   
   // Add disclaimer
-  doc.setFillColor(253, 245, 240);
+  doc.setFillColor(253, 245, 250);
   doc.setDrawColor(252, 226, 202);
   doc.roundedRect(20, currentY, 170, 25, 2, 2, 'FD');
   
