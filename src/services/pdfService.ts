@@ -1,0 +1,218 @@
+import { jsPDF } from 'jspdf';
+import { AnalysisResults } from './analysisService';
+
+/**
+ * Generate a PDF report from analysis results
+ */
+export const generatePdfReport = async (
+  results: AnalysisResults,
+  imageUrl: string | null
+): Promise<void> => {
+  // Create a new PDF document
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+  
+  // Add metadata
+  doc.setProperties({
+    title: `PancreScan AI Report ${results.analysisId}`,
+    subject: 'Pancreatic Disease Analysis',
+    author: 'PancreScan AI',
+    keywords: 'pancreas, medical imaging, AI analysis',
+    creator: 'PancreScan AI'
+  });
+  
+  // Add header with logo
+  addHeader(doc);
+  
+  // Add report title and ID
+  doc.setFontSize(20);
+  doc.setTextColor(0, 78, 152); // Primary blue color
+  doc.text('Pancreatic Analysis Report', 105, 30, { align: 'center' });
+  
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Report ID: ${results.analysisId} | Generated: ${new Date().toLocaleString()}`, 105, 36, { align: 'center' });
+  
+  // Add image if available
+  let currentY = 45;
+  if (imageUrl) {
+    try {
+      // For demo purposes, we'll skip actual image embedding
+      // as it requires additional processing of base64 data
+      
+      // In a real implementation, we'd load and embed the image:
+      // const img = await loadImage(imageUrl);
+      // doc.addImage(img, 'JPEG', 65, currentY, 80, 60);
+      
+      // Instead, we'll add a placeholder
+      doc.setDrawColor(200, 200, 200);
+      doc.setFillColor(240, 240, 240);
+      doc.roundedRect(65, currentY, 80, 60, 3, 3, 'FD');
+      doc.setFontSize(12);
+      doc.setTextColor(150, 150, 150);
+      doc.text('Scan Image', 105, currentY + 30, { align: 'center' });
+      
+      currentY += 65;
+    } catch (error) {
+      console.error('Error adding image to PDF:', error);
+      // Continue without the image
+    }
+  }
+  
+  // Add results section title
+  doc.setFontSize(14);
+  doc.setTextColor(0, 78, 152);
+  doc.text('Analysis Results', 20, currentY);
+  currentY += 8;
+  
+  // Add probability results
+  doc.setFontSize(11);
+  doc.setTextColor(60, 60, 60);
+  
+  // Format disease names for display
+  const formatDiseaseName = (name: string) => {
+    return name.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+  
+  // Draw probability bars
+  Object.entries(results.probabilities).forEach(([disease, probability], index) => {
+    // Disease name
+    doc.setFontSize(11);
+    doc.setTextColor(60, 60, 60);
+    doc.text(formatDiseaseName(disease), 20, currentY);
+    
+    // Probability percentage
+    doc.text(`${(probability * 100).toFixed(1)}%`, 190, currentY, { align: 'right' });
+    
+    currentY += 5;
+    
+    // Bar background
+    doc.setFillColor(230, 230, 230);
+    doc.rect(20, currentY, 170, 5, 'F');
+    
+    // Bar fill based on probability
+    const fillColor = probability > 0.5 
+      ? [239, 68, 68] // Red
+      : probability > 0.25 
+        ? [245, 158, 11] // Amber
+        : [34, 197, 94]; // Green
+        
+    doc.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
+    doc.rect(20, currentY, 170 * probability, 5, 'F');
+    
+    currentY += 10;
+  });
+  
+  currentY += 5;
+  
+  // Add primary finding
+  const highestProbDisease = Object.entries(results.probabilities)
+    .reduce((max, [disease, probability]) => 
+      (probability as number) > (max[1] as number) ? [disease, probability] : max, 
+      ['', 0]
+    );
+  
+  doc.setFillColor(240, 249, 255);
+  doc.setDrawColor(186, 230, 253);
+  doc.roundedRect(20, currentY, 170, 15, 2, 2, 'FD');
+  
+  doc.setFontSize(11);
+  doc.setTextColor(30, 64, 175);
+  doc.text(
+    `Primary finding: ${formatDiseaseName(highestProbDisease[0] as string)} ` +
+    `(${(highestProbDisease[1] as number * 100).toFixed(1)}%)`, 
+    25, 
+    currentY + 8
+  );
+  
+  currentY += 20;
+  
+  // Add explanation for the primary condition
+  doc.setFontSize(14);
+  doc.setTextColor(0, 78, 152);
+  doc.text('Medical Information', 20, currentY);
+  currentY += 8;
+  
+  doc.setFontSize(12);
+  doc.setTextColor(60, 60, 60);
+  doc.text(formatDiseaseName(highestProbDisease[0] as string), 20, currentY);
+  currentY += 6;
+  
+  // Add explanation text with word wrapping
+  const explanation = results.explanations[highestProbDisease[0] as string];
+  const splitText = doc.splitTextToSize(explanation, 170);
+  doc.setFontSize(10);
+  doc.setTextColor(80, 80, 80);
+  doc.text(splitText, 20, currentY);
+  
+  currentY += splitText.length * 5 + 10;
+  
+  // Add disclaimer
+  doc.setFillColor(253, 245, 240);
+  doc.setDrawColor(252, 226, 202);
+  doc.roundedRect(20, currentY, 170, 25, 2, 2, 'FD');
+  
+  doc.setFontSize(11);
+  doc.setTextColor(194, 65, 12);
+  doc.text('Important Notice', 25, currentY + 7);
+  
+  doc.setFontSize(9);
+  doc.setTextColor(120, 53, 15);
+  const disclaimer = 
+    'This report is generated by an AI system and is intended for informational purposes only. ' +
+    'It should not be considered as a medical diagnosis. Please consult with a qualified healthcare ' +
+    'professional to interpret these results and determine appropriate next steps.';
+  
+  const splitDisclaimer = doc.splitTextToSize(disclaimer, 160);
+  doc.text(splitDisclaimer, 25, currentY + 14);
+  
+  // Add footer
+  addFooter(doc);
+  
+  // Save the PDF
+  doc.save(`PancreScan_Report_${results.analysisId}.pdf`);
+};
+
+/**
+ * Add header to PDF
+ */
+const addHeader = (doc: jsPDF) => {
+  // Add logo placeholder
+  doc.setFontSize(16);
+  doc.setTextColor(0, 78, 152);
+  doc.text('PancreScan AI', 20, 15);
+  
+  // Add a decorative line
+  doc.setDrawColor(0, 78, 152);
+  doc.setLineWidth(0.5);
+  doc.line(20, 18, 190, 18);
+};
+
+/**
+ * Add footer to PDF
+ */
+const addFooter = (doc: jsPDF) => {
+  const pageCount = doc.getNumberOfPages();
+  
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    
+    // Add page number
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
+    
+    // Add website
+    doc.text('pancrescanai.com', 190, 285, { align: 'right' });
+    
+    // Add line
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.5);
+    doc.line(20, 280, 190, 280);
+  }
+};
