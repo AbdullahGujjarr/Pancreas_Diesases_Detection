@@ -1,8 +1,8 @@
-
 import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp } from 'lucide-react';
 import HeatmapViewer from '../components/results/HeatmapViewer';
+import ModernChart from '../components/results/ModernChart';
 import { generatePdfReport } from '../services/pdfService';
 import { chatbotRespond } from '../services/chatbotService';
 
@@ -126,47 +126,14 @@ const ResultsPage: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-6">
-            <div className="card bg-white p-6">
-              <h2 className="text-xl font-semibold mb-4">Disease Probability Analysis</h2>
-              
-              <div className="flex items-end justify-around h-64 mb-8">
-                {Object.entries(results.probabilities).map(([disease, probability]) => (
-                  <div 
-                    key={disease} 
-                    className="flex flex-col items-center w-16 group relative"
-                    title={`${formatDiseaseName(disease)}: ${((probability as number) * 100).toFixed(1)}%`}
-                  >
-                    <div className="w-8 bg-gray-100 rounded-t-lg overflow-hidden" style={{ height: '200px' }}>
-                      <div 
-                        className="w-full transition-all duration-500"
-                        style={{ 
-                          height: `${(probability as number) * 100}%`,
-                          marginTop: `${100 - ((probability as number) * 100)}%`,
-                          backgroundColor: (probability as number) > 0.5 ? '#ef4444' : 
-                                         (probability as number) > 0.25 ? '#f59e0b' : '#22c55e'
-                        }}
-                      ></div>
-                    </div>
-                    <span className="mt-2 text-sm font-medium text-gray-900">
-                      {((probability as number) * 100).toFixed(1)}%
-                    </span>
-                    <span className="mt-1 text-xs text-gray-600 text-center">
-                      {formatDiseaseName(disease).split(' ').map((word, i) => (
-                        <span key={i} className="block">{word}</span>
-                      ))}
-                    </span>
-                    
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="bg-gray-900 text-white text-sm rounded px-2 py-1 whitespace-nowrap">
-                        {formatDiseaseName(disease)}: {((probability as number) * 100).toFixed(1)}%
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            {/* Replace the old chart with the modern one */}
+            <ModernChart 
+              data={results.probabilities}
+              title="Disease Probability Analysis"
+            />
 
-              <div className="grid grid-cols-2 gap-4 mt-8">
+            <div className="card bg-white p-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg border border-gray-200">
                   <div className="flex items-center text-green-600 mb-2">
                     <TrendingDown className="w-5 h-5 mr-2" />

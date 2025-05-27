@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 
 // Types for analysis results
@@ -11,7 +10,9 @@ export interface AnalysisResults {
   confidence: number;
 }
 
-export const analyzeImage = async (file: File): Promise<AnalysisResults> => {
+const API_ENDPOINT = 'https://api.pancrescan.example.com';
+
+export const analyzeImage = async (_file: File): Promise<AnalysisResults> => {
   try {
     // In a real implementation, this would be an actual API call
     // For demo, we'll simulate an API response with realistic variations
