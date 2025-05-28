@@ -18,6 +18,17 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
   // Sort data by probability for better visualization
   const sortedData = Object.entries(data).sort(([,a], [,b]) => (b as number) - (a as number));
 
+  // Function to get color based on probability (risk level)
+  const getBarColor = (probability: number) => {
+    if (probability > 0.5) {
+      // High risk - red gradient
+      return 'linear-gradient(to top, #DC2626, #F87171)';
+    } else {
+      // Low risk - green gradient
+      return 'linear-gradient(to top, #059669, #34D399)';
+    }
+  };
+
   return (
     <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
       <div className="flex items-center mb-6">
@@ -70,12 +81,12 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
                     ))}
                   </div>
                   
-                  {/* Animated bar - using teal/turquoise colors like in the image */}
+                  {/* Animated bar - color changes based on risk level */}
                   <div 
                     className="w-full absolute bottom-0 rounded-sm transition-all duration-1000 ease-out"
                     style={{ 
                       height: `${height * 0.64}%`,
-                      background: 'linear-gradient(to top, #14B8A6, #5EEAD4)',
+                      background: getBarColor(probability as number),
                       animation: 'slide-up 1.5s ease-out'
                     }}
                   >
@@ -94,33 +105,6 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
             </div>
           );
         })}
-      </div>
-      
-      {/* Bottom summary section like in the image */}
-      <div className="grid grid-cols-2 gap-8 pt-6 border-t border-gray-200">
-        <div>
-          <h4 className="text-sm font-medium text-red-600 mb-2">🔺 Least Likely</h4>
-          <div className="text-gray-800">
-            <div className="font-semibold">
-              {formatDiseaseName(sortedData[sortedData.length - 1][0])}
-            </div>
-            <div className="text-2xl font-bold text-red-600">
-              {((sortedData[sortedData.length - 1][1] as number) * 100).toFixed(1)}%
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <h4 className="text-sm font-medium text-red-600 mb-2">🔺 Most Likely</h4>
-          <div className="text-gray-800">
-            <div className="font-semibold">
-              {formatDiseaseName(sortedData[0][0])}
-            </div>
-            <div className="text-2xl font-bold text-red-600">
-              {((sortedData[0][1] as number) * 100).toFixed(1)}%
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

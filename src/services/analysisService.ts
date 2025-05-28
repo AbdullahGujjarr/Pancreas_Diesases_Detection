@@ -2,6 +2,7 @@
 // Mock analysis service for demonstration
 
 export interface AnalysisResults {
+  analysisId: string;
   probabilities: Record<string, number>;
   explanations: Record<string, string>;
 }
@@ -12,6 +13,7 @@ export const analyzeImage = async (_imageFile: File): Promise<AnalysisResults> =
   
   // Mock response with realistic probabilities
   return {
+    analysisId: `analysis_${Date.now()}`,
     probabilities: {
       acute_pancreatitis: 0.907,
       pancreatic_cysts: 0.039,
