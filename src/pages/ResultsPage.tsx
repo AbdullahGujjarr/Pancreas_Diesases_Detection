@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp } from 'lucide-react';
@@ -31,6 +30,55 @@ const ResultsPage: React.FC = () => {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const [message, setMessage] = useState('');
+  
+  // Function to format disease name
+  const formatDiseaseName = (name: string) => {
+    return name.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  // Get highest probability disease
+  const highestProbDisease = Object.entries(results.probabilities)
+    .reduce((max, [disease, probability]) => 
+      (probability as number) > (max[1] as number) ? [disease, probability] : max, 
+      ['', 0]
+    );
+
+  // Generate detailed analysis message
+  const generateAnalysisMessage = () => {
+    const sortedResults = Object.entries(results.probabilities)
+      .sort(([,a], [,b]) => (b as number) - (a as number));
+    
+    let analysisText = `🔬 **Complete Analysis Results**\n\n`;
+    
+    analysisText += `**Highest Risk Finding:**\n`;
+    analysisText += `${formatDiseaseName(highestProbDisease[0] as string)} - ${((highestProbDisease[1] as number) * 100).toFixed(1)}%\n\n`;
+    
+    analysisText += `**Full Probability Breakdown:**\n`;
+    sortedResults.forEach(([disease, probability]) => {
+      const percentage = ((probability as number) * 100).toFixed(1);
+      const riskLevel = (probability as number) > 0.5 ? '🔴 High' : '🟢 Low';
+      analysisText += `• ${formatDiseaseName(disease)}: ${percentage}% ${riskLevel}\n`;
+    });
+    
+    analysisText += `\n**Clinical Summary:**\n`;
+    analysisText += `${results.explanations[highestProbDisease[0] as string]}\n\n`;
+    
+    if ((highestProbDisease[1] as number) > 0.5) {
+      analysisText += `⚠️ **Important Notice:** This analysis shows elevated probability for ${formatDiseaseName(highestProbDisease[0] as string)}. This finding requires immediate professional medical evaluation.\n\n`;
+    }
+    
+    analysisText += `**Recommendations:**\n`;
+    analysisText += `• Consult with a healthcare provider to discuss these results\n`;
+    analysisText += `• Schedule appropriate follow-up examinations\n`;
+    analysisText += `• Keep this analysis report for your medical records\n\n`;
+    
+    analysisText += `Remember: This AI analysis is a screening tool to assist healthcare providers and should not replace professional medical evaluation.`;
+    
+    return analysisText;
+  };
+
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -46,16 +94,18 @@ const ResultsPage: React.FC = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  const highestProbDisease = Object.entries(results.probabilities)
-    .reduce((max, [disease, probability]) => 
-      (probability as number) > (max[1] as number) ? [disease, probability] : max, 
-      ['', 0]
-    );
-
-  const formatDiseaseName = (name: string) => {
-    return name.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+  const handleOpenChatbot = () => {
+    setShowChatbot(true);
+    
+    // Add detailed analysis message when chatbot opens
+    const analysisMessage = {
+      id: `analysis_${Date.now()}`,
+      text: generateAnalysisMessage(),
+      sender: 'bot' as const,
+      timestamp: new Date(),
+    };
+    
+    setChatMessages(prev => [...prev, analysisMessage]);
   };
 
   const handleDownloadPdf = async () => {
@@ -260,7 +310,7 @@ const ResultsPage: React.FC = () => {
                 </button>
                 
                 <button
-                  onClick={() => setShowChatbot(true)}
+                  onClick={handleOpenChatbot}
                   className="w-full flex items-center justify-center btn btn-outline"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
@@ -302,7 +352,7 @@ const ResultsPage: React.FC = () => {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    <p className="text-base">{msg.text}</p>
+                    <p className="text-base whitespace-pre-line">{msg.text}</p>
                     <p className="text-xs opacity-70 text-right mt-2">
                       {msg.timestamp.toLocaleTimeString([], { 
                         hour: '2-digit', 
