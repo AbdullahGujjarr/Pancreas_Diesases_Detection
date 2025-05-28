@@ -1,6 +1,12 @@
 
 // Mock analysis service for demonstration
-export const analyzeImage = async (imageFile: File) => {
+
+export interface AnalysisResults {
+  probabilities: Record<string, number>;
+  explanations: Record<string, string>;
+}
+
+export const analyzeImage = async (_imageFile: File): Promise<AnalysisResults> => {
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 3000));
   

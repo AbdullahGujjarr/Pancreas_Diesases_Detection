@@ -12,113 +12,114 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };
-  
-  const getBarColor = (probability: number) => {
-    if (probability > 0.5) return 'bg-red-500'; // High risk - Red
-    if (probability > 0.25) return 'bg-yellow-500'; // Medium risk - Yellow
-    return 'bg-green-500'; // Low risk - Green
-  };
-  
-  const getPercentageColor = (probability: number) => {
-    if (probability > 0.5) return 'bg-red-500 text-white'; // High risk - Red
-    if (probability > 0.25) return 'bg-yellow-500 text-white'; // Medium risk - Yellow
-    return 'bg-green-500 text-white'; // Low risk - Green
-  };
 
   const maxValue = Math.max(...Object.values(data));
 
+  // Sort data by probability for better visualization
+  const sortedData = Object.entries(data).sort(([,a], [,b]) => (b as number) - (a as number));
+
   return (
     <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">{title}</h2>
+      <div className="flex items-center mb-6">
+        <div className="w-6 h-6 bg-blue-500 rounded mr-3 flex items-center justify-center">
+          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+      </div>
       
-      <div className="flex justify-center items-end gap-8 h-96">
-        {Object.entries(data).map(([disease, probability]) => {
-          const height = (probability / maxValue) * 100;
+      <h3 className="text-lg font-medium text-gray-700 mb-6">Probability Distribution</h3>
+      
+      <div className="flex justify-center items-end gap-12 h-80 mb-8">
+        {sortedData.map(([disease, probability]) => {
+          const height = (probability as number / maxValue) * 100;
+          const percentage = ((probability as number) * 100).toFixed(1);
           
           return (
             <div 
               key={disease} 
-              className="flex flex-col items-center group cursor-pointer"
+              className="flex flex-col items-center group relative"
             >
               {/* Percentage label on top */}
-              <div className={`mb-4 px-4 py-2 rounded-full font-bold text-lg shadow-lg transform transition-all duration-300 group-hover:scale-110 ${getPercentageColor(probability)}`}>
-                {(probability * 100).toFixed(1)}%
+              <div className="mb-2 text-sm font-medium text-gray-600">
+                {percentage}%
               </div>
               
-              {/* Bar container */}
-              <div className="w-20 h-80 bg-gray-200 rounded-xl relative overflow-hidden shadow-inner">
-                {/* Animated bar */}
-                <div 
-                  className={`w-full absolute bottom-0 rounded-xl transition-all duration-1000 ease-out transform group-hover:scale-105 ${getBarColor(probability)} shadow-lg`}
-                  style={{ 
-                    height: `${height}%`,
-                    animation: 'slide-up 1.5s ease-out'
-                  }}
-                >
-                  {/* Glossy gradient effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/30 rounded-xl"></div>
-                  
-                  {/* Highlight effect */}
-                  <div className="absolute top-2 left-2 right-2 h-6 bg-white/30 rounded-lg blur-sm"></div>
+              {/* Bar container with Y-axis labels */}
+              <div className="relative">
+                {/* Y-axis labels */}
+                <div className="absolute -left-8 h-64 flex flex-col justify-between text-xs text-gray-500">
+                  <span>100</span>
+                  <span>75</span>
+                  <span>50</span>
+                  <span>25</span>
+                  <span>0</span>
                 </div>
                 
-                {/* Grid lines for reference */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {[25, 50, 75].map(line => (
-                    <div 
-                      key={line}
-                      className="absolute w-full border-t border-gray-300/40"
-                      style={{ bottom: `${line}%` }}
-                    ></div>
-                  ))}
+                {/* Bar background */}
+                <div className="w-16 h-64 bg-gray-100 rounded-sm relative border border-gray-200">
+                  {/* Grid lines */}
+                  <div className="absolute inset-0">
+                    {[25, 50, 75].map(line => (
+                      <div 
+                        key={line}
+                        className="absolute w-full border-t border-gray-200"
+                        style={{ bottom: `${line * 0.64}%` }}
+                      ></div>
+                    ))}
+                  </div>
+                  
+                  {/* Animated bar - using teal/turquoise colors like in the image */}
+                  <div 
+                    className="w-full absolute bottom-0 rounded-sm transition-all duration-1000 ease-out"
+                    style={{ 
+                      height: `${height * 0.64}%`,
+                      background: 'linear-gradient(to top, #14B8A6, #5EEAD4)',
+                      animation: 'slide-up 1.5s ease-out'
+                    }}
+                  >
+                    {/* Subtle highlight effect */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20 rounded-sm"></div>
+                  </div>
                 </div>
               </div>
               
               {/* Disease name label */}
-              <div className="mt-4 text-center max-w-24">
-                <span className="text-sm font-semibold text-gray-700 leading-tight">
-                  {formatDiseaseName(disease).split(' ').map((word, i) => (
-                    <div key={i} className="block">{word}</div>
-                  ))}
+              <div className="mt-4 text-center max-w-20">
+                <span className="text-xs font-medium text-gray-700 leading-tight block">
+                  {formatDiseaseName(disease)}
                 </span>
-              </div>
-              
-              {/* Hover tooltip */}
-              <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20">
-                <div className="bg-gray-900 text-white text-sm rounded-lg px-4 py-3 shadow-xl whitespace-nowrap">
-                  <div className="font-semibold text-center">
-                    {formatDiseaseName(disease)}
-                  </div>
-                  <div className="text-gray-300 text-center mt-1">
-                    Probability: {(probability * 100).toFixed(1)}%
-                  </div>
-                  <div className="text-xs text-gray-400 text-center mt-1">
-                    {probability > 0.5 ? 'High Risk' : probability > 0.25 ? 'Medium Risk' : 'Low Risk'}
-                  </div>
-                  {/* Tooltip arrow */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2">
-                    <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                  </div>
-                </div>
               </div>
             </div>
           );
         })}
       </div>
       
-      {/* Legend */}
-      <div className="mt-8 flex justify-center gap-8">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-green-500"></div>
-          <span className="text-sm text-gray-600">Low Risk (≤25%)</span>
+      {/* Bottom summary section like in the image */}
+      <div className="grid grid-cols-2 gap-8 pt-6 border-t border-gray-200">
+        <div>
+          <h4 className="text-sm font-medium text-red-600 mb-2">🔺 Least Likely</h4>
+          <div className="text-gray-800">
+            <div className="font-semibold">
+              {formatDiseaseName(sortedData[sortedData.length - 1][0])}
+            </div>
+            <div className="text-2xl font-bold text-red-600">
+              {((sortedData[sortedData.length - 1][1] as number) * 100).toFixed(1)}%
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-yellow-500"></div>
-          <span className="text-sm text-gray-600">Medium Risk (25-50%)</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-red-500"></div>
-          <span className="text-sm text-gray-600">High Risk (&gt;50%)</span>
+        
+        <div>
+          <h4 className="text-sm font-medium text-red-600 mb-2">🔺 Most Likely</h4>
+          <div className="text-gray-800">
+            <div className="font-semibold">
+              {formatDiseaseName(sortedData[0][0])}
+            </div>
+            <div className="text-2xl font-bold text-red-600">
+              {((sortedData[0][1] as number) * 100).toFixed(1)}%
+            </div>
+          </div>
         </div>
       </div>
     </div>
