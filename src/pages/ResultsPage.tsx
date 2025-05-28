@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp } from 'lucide-react';
 import HeatmapViewer from '../components/results/HeatmapViewer';
-import ModernChart from '../components/results/ModernChart';
+import VerticalChart from '../components/results/VerticalChart';
 import { generatePdfReport } from '../services/pdfService';
 import { chatbotRespond } from '../services/chatbotService';
 
@@ -128,8 +128,8 @@ const ResultsPage: React.FC = () => {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Chart and Statistics */}
           <div className="xl:col-span-2 space-y-6">
-            {/* Modern Chart */}
-            <ModernChart 
+            {/* Vertical Chart */}
+            <VerticalChart 
               data={results.probabilities}
               title="Disease Probability Analysis"
             />
