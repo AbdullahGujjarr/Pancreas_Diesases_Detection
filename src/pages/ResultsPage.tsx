@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp } from 'lucide-react';
@@ -107,98 +108,99 @@ const ResultsPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-[calc(100vh-64px)] py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-50 min-h-[calc(100vh-64px)] py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={() => navigate('/upload')}
-          className="flex items-center text-gray-600 hover:text-primary mb-6"
+          className="flex items-center text-gray-600 hover:text-primary mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Upload another scan
         </button>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Analysis Results</h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 mt-1">
             AI analysis complete. Review the findings below.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            {/* Replace the old chart with the modern one */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Left Column - Chart and Statistics */}
+          <div className="xl:col-span-2 space-y-6">
+            {/* Modern Chart */}
             <ModernChart 
               data={results.probabilities}
               title="Disease Probability Analysis"
             />
 
-            <div className="card bg-white p-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg border border-gray-200">
-                  <div className="flex items-center text-green-600 mb-2">
-                    <TrendingDown className="w-5 h-5 mr-2" />
-                    <span className="text-sm font-medium">Lowest Risk</span>
-                  </div>
-                  <h3 className="font-medium text-gray-900">
-                    {formatDiseaseName(Object.entries(results.probabilities)
-                      .reduce((min, [disease, prob]) => 
-                        (prob as number) < (min[1] as number) ? [disease, prob] : min, ['', 1])[0])}
-                  </h3>
-                  <p className="text-2xl font-bold text-green-600">
-                    {(Math.min(...Object.values(results.probabilities).map(p => p as number)) * 100).toFixed(1)}%
-                  </p>
+            {/* Risk Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+                <div className="flex items-center text-green-600 mb-3">
+                  <TrendingDown className="w-5 h-5 mr-2" />
+                  <span className="text-sm font-medium">Lowest Risk</span>
                 </div>
-                <div className="p-4 rounded-lg border border-gray-200">
-                  <div className="flex items-center text-red-600 mb-2">
-                    <TrendingUp className="w-5 h-5 mr-2" />
-                    <span className="text-sm font-medium">Highest Risk</span>
-                  </div>
-                  <h3 className="font-medium text-gray-900">
-                    {formatDiseaseName(highestProbDisease[0] as string)}
-                  </h3>
-                  <p className="text-2xl font-bold text-red-600">
-                    {(highestProbDisease[1] as number * 100).toFixed(1)}%
-                  </p>
-                </div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  {formatDiseaseName(Object.entries(results.probabilities)
+                    .reduce((min, [disease, prob]) => 
+                      (prob as number) < (min[1] as number) ? [disease, prob] : min, ['', 1])[0])}
+                </h3>
+                <p className="text-2xl font-bold text-green-600">
+                  {(Math.min(...Object.values(results.probabilities).map(p => p as number)) * 100).toFixed(1)}%
+                </p>
               </div>
-
-              {(highestProbDisease[1] as number) > 0.5 && (
-                <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <div className="flex items-start">
-                    <span className="text-yellow-600 text-lg mr-2">⚠</span>
-                    <div>
-                      <h4 className="font-medium text-yellow-800 mb-1">Important Finding:</h4>
-                      <p className="text-sm text-yellow-700">
-                        Analysis indicates elevated probability for {formatDiseaseName(highestProbDisease[0] as string)}.
-                        This finding requires professional medical evaluation. Please consult a healthcare provider
-                        to discuss these results and determine appropriate next steps.
-                      </p>
-                    </div>
-                  </div>
+              
+              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+                <div className="flex items-center text-red-600 mb-3">
+                  <TrendingUp className="w-5 h-5 mr-2" />
+                  <span className="text-sm font-medium">Highest Risk</span>
                 </div>
-              )}
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  {formatDiseaseName(highestProbDisease[0] as string)}
+                </h3>
+                <p className="text-2xl font-bold text-red-600">
+                  {(highestProbDisease[1] as number * 100).toFixed(1)}%
+                </p>
+              </div>
             </div>
 
-            <div className="card">
+            {/* Important Finding Alert */}
+            {(highestProbDisease[1] as number) > 0.5 && (
+              <div className="bg-white p-5 rounded-xl shadow-md border border-yellow-200">
+                <div className="flex items-start">
+                  <span className="text-yellow-600 text-lg mr-3">⚠</span>
+                  <div>
+                    <h4 className="font-semibold text-yellow-800 mb-2">Important Finding:</h4>
+                    <p className="text-sm text-yellow-700 leading-relaxed">
+                      Analysis indicates elevated probability for {formatDiseaseName(highestProbDisease[0] as string)}.
+                      This finding requires professional medical evaluation. Please consult a healthcare provider
+                      to discuss these results and determine appropriate next steps.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Scan Analysis */}
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
               <h2 className="font-semibold text-xl mb-4">Scan Analysis</h2>
               {imageUrl ? (
-                <div className="relative">
+                <div className="space-y-4">
                   <HeatmapViewer 
                     originalImage={imageUrl} 
                     showHeatmap={showHeatmap}
                   />
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setShowHeatmap(!showHeatmap)}
-                      className={`px-4 py-2 text-sm rounded-lg font-medium transition-colors duration-200 ${
-                        showHeatmap 
-                          ? 'bg-gray-200 text-gray-800' 
-                          : 'bg-primary text-white'
-                      }`}
-                    >
-                      {showHeatmap ? 'Hide Analysis Overlay' : 'Show Analysis Overlay'}
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setShowHeatmap(!showHeatmap)}
+                    className={`w-full px-4 py-2 text-sm rounded-lg font-medium transition-colors duration-200 ${
+                      showHeatmap 
+                        ? 'bg-gray-200 text-gray-800' 
+                        : 'bg-primary text-white hover:bg-primary/90'
+                    }`}
+                  >
+                    {showHeatmap ? 'Hide Analysis Overlay' : 'Show Analysis Overlay'}
+                  </button>
                 </div>
               ) : (
                 <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
@@ -206,8 +208,37 @@ const ResultsPage: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
 
-            <div className="card">
+          {/* Right Column - Clinical Info and Actions */}
+          <div className="space-y-6">
+            {/* Clinical Information */}
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+              <h2 className="font-semibold text-xl mb-4">Clinical Information</h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium text-gray-800 mb-2">
+                    {formatDiseaseName(highestProbDisease[0] as string)}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {results.explanations[highestProbDisease[0] as string]}
+                  </p>
+                </div>
+                
+                <div className="border-t pt-4">
+                  <h3 className="font-medium text-gray-800 mb-2">Medical Notice</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    This AI analysis is provided as a screening tool to assist healthcare providers.
+                    It should not replace professional medical evaluation. Please consult with a qualified
+                    healthcare provider to discuss these results and determine appropriate next steps.
+                    Early detection and proper medical evaluation are essential for optimal outcomes.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
               <h2 className="font-semibold text-xl mb-4">Actions</h2>
               <div className="space-y-3">
                 <button
@@ -238,35 +269,10 @@ const ResultsPage: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div className="space-y-6">
-            <div className="card">
-              <h2 className="font-semibold text-xl mb-4">Clinical Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium text-gray-800 mb-2">
-                    {formatDiseaseName(highestProbDisease[0] as string)}
-                  </h3>
-                  <p className="text-gray-600">
-                    {results.explanations[highestProbDisease[0] as string]}
-                  </p>
-                </div>
-                
-                <div className="border-t pt-4">
-                  <h3 className="font-medium text-gray-800 mb-2">Medical Notice</h3>
-                  <p className="text-gray-600">
-                    This AI analysis is provided as a screening tool to assist healthcare providers.
-                    It should not replace professional medical evaluation. Please consult with a qualified
-                    healthcare provider to discuss these results and determine appropriate next steps.
-                    Early detection and proper medical evaluation are essential for optimal outcomes.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
+      {/* Chatbot Modal */}
       {showChatbot && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-xl shadow-xl w-[900px] mx-4 h-[85vh] flex flex-col">
