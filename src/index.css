@@ -5,11 +5,13 @@
 @keyframes slide-up {
   from {
     height: 0%;
-    opacity: 0.8;
+    opacity: 0;
+    transform: scaleY(0);
   }
   to {
     height: var(--final-height);
     opacity: 1;
+    transform: scaleY(1);
   }
 }
 
