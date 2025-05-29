@@ -1,3 +1,4 @@
+
 import { jsPDF } from 'jspdf';
 import { AnalysisResults } from './analysisService';
 
@@ -40,25 +41,22 @@ export const generatePdfReport = async (
   let currentY = 45;
   if (imageUrl) {
     try {
-      // For demo purposes, we'll skip actual image embedding
-      // as it requires additional processing of base64 data
-      
-      // In a real implementation, we'd load and embed the image:
-      // const img = await loadImage(imageUrl);
-      // doc.addImage(img, 'JPEG', 65, currentY, 80, 60);
-      
-      // Instead, we'll add a placeholder
-      doc.setDrawColor(200, 200, 200);
-      doc.setFillColor(240, 240, 240);
-      doc.roundedRect(65, currentY, 80, 60, 3, 3, 'FD');
-      doc.setFontSize(12);
-      doc.setTextColor(150, 150, 150);
-      doc.text('Scan Image', 105, currentY + 30, { align: 'center' });
-      
-      currentY += 65;
+      // Convert image to base64 and add to PDF
+      const img = await loadImageAsBase64(imageUrl);
+      if (img) {
+        // Add image with proper dimensions
+        doc.addImage(img, 'JPEG', 65, currentY, 80, 60);
+        currentY += 65;
+      } else {
+        // Fallback if image loading fails
+        addImagePlaceholder(doc, currentY);
+        currentY += 65;
+      }
     } catch (error) {
       console.error('Error adding image to PDF:', error);
-      // Continue without the image
+      // Add placeholder if image fails to load
+      addImagePlaceholder(doc, currentY);
+      currentY += 65;
     }
   }
   
@@ -176,6 +174,66 @@ export const generatePdfReport = async (
   
   // Save the PDF
   doc.save(`PancreScan_Report_${results.analysisId}.pdf`);
+};
+
+/**
+ * Load image as base64 for PDF embedding
+ */
+const loadImageAsBase64 = (imageUrl: string): Promise<string | null> => {
+  return new Promise((resolve) => {
+    try {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            resolve(null);
+            return;
+          }
+          
+          // Set canvas dimensions
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          // Draw image to canvas
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert to base64
+          const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+          resolve(dataURL);
+        } catch (error) {
+          console.error('Error converting image to base64:', error);
+          resolve(null);
+        }
+      };
+      
+      img.onerror = () => {
+        console.error('Error loading image for PDF');
+        resolve(null);
+      };
+      
+      img.src = imageUrl;
+    } catch (error) {
+      console.error('Error in loadImageAsBase64:', error);
+      resolve(null);
+    }
+  });
+};
+
+/**
+ * Add image placeholder if actual image fails to load
+ */
+const addImagePlaceholder = (doc: jsPDF, currentY: number) => {
+  doc.setDrawColor(200, 200, 200);
+  doc.setFillColor(240, 240, 240);
+  doc.roundedRect(65, currentY, 80, 60, 3, 3, 'FD');
+  doc.setFontSize(12);
+  doc.setTextColor(150, 150, 150);
+  doc.text('Scan Image', 105, currentY + 30, { align: 'center' });
 };
 
 /**
