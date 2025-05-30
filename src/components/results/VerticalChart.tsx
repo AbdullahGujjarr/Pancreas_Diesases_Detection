@@ -13,33 +13,43 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
     ).join(' ');
   };
 
-  const maxValue = Math.max(...Object.values(data));
-
   // Sort data by probability for better visualization
   const sortedData = Object.entries(data).sort(([,a], [,b]) => (b as number) - (a as number));
 
-  // Professional color scheme based on medical standards
-  const getBarGradient = (probability: number) => {
+  // Professional color scheme based on probability ranges
+  const getBarColor = (probability: number) => {
     if (probability > 0.7) {
-      // Critical risk - Deep red with professional gradient
-      return 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
+      // High probability - Professional red
+      return 'linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)';
     } else if (probability > 0.5) {
-      // High risk - Orange-red gradient
-      return 'linear-gradient(135deg, #EA580C 0%, #DC2626 50%, #B91C1C 100%)';
+      // Medium-high probability - Orange
+      return 'linear-gradient(135deg, #F97316 0%, #EA580C 50%, #C2410C 100%)';
     } else if (probability > 0.3) {
-      // Medium risk - Amber gradient
+      // Medium probability - Amber
       return 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)';
+    } else if (probability > 0.1) {
+      // Low-medium probability - Light green
+      return 'linear-gradient(135deg, #22C55E 0%, #16A34A 50%, #15803D 100%)';
     } else {
-      // Low risk - Professional green gradient
+      // Very low probability - Professional green
       return 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)';
     }
   };
 
   const getGlowColor = (probability: number) => {
-    if (probability > 0.7) return 'rgba(220, 38, 38, 0.4)';
-    if (probability > 0.5) return 'rgba(234, 88, 12, 0.4)';
+    if (probability > 0.7) return 'rgba(239, 68, 68, 0.4)';
+    if (probability > 0.5) return 'rgba(249, 115, 22, 0.4)';
     if (probability > 0.3) return 'rgba(245, 158, 11, 0.4)';
+    if (probability > 0.1) return 'rgba(34, 197, 94, 0.4)';
     return 'rgba(16, 185, 129, 0.4)';
+  };
+
+  const getRiskLabel = (probability: number) => {
+    if (probability > 0.7) return { text: 'High Risk', color: 'text-red-600' };
+    if (probability > 0.5) return { text: 'Elevated Risk', color: 'text-orange-600' };
+    if (probability > 0.3) return { text: 'Moderate Risk', color: 'text-amber-600' };
+    if (probability > 0.1) return { text: 'Low Risk', color: 'text-green-600' };
+    return { text: 'Very Low Risk', color: 'text-emerald-600' };
   };
 
   return (
@@ -53,49 +63,47 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
         <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{title}</h2>
       </div>
       
-      <h3 className="text-lg font-semibold text-gray-600 mb-10 text-center tracking-wide">Risk Assessment Distribution</h3>
+      <h3 className="text-lg font-semibold text-gray-600 mb-10 text-center tracking-wide">Probability Distribution</h3>
       
-      <div className="flex justify-center items-end gap-12 h-96 mb-8">
+      <div className="flex justify-center items-end gap-8 h-96 mb-8">
         {sortedData.map(([disease, probability]) => {
-          const height = (probability as number / maxValue) * 100;
+          // Calculate proportional height based on actual probability (0-100% of container)
+          const height = (probability as number) * 100;
           const percentage = ((probability as number) * 100).toFixed(1);
+          const riskInfo = getRiskLabel(probability as number);
           
           return (
             <div 
               key={disease} 
               className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105"
             >
-              {/* Enhanced percentage label */}
-              <div className="mb-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200/50 transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
-                <span className="text-lg font-bold text-gray-800 group-hover:text-gray-900">
-                  {percentage}%
-                </span>
+              {/* Percentage label with risk indicator */}
+              <div className="mb-4 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
+                <div className="text-center">
+                  <span className="text-xl font-bold text-gray-800 group-hover:text-gray-900 block">
+                    {percentage}%
+                  </span>
+                  <span className={`text-xs font-medium ${riskInfo.color}`}>
+                    {riskInfo.text}
+                  </span>
+                </div>
               </div>
               
-              {/* Professional bar container */}
-              <div className="relative">
-                {/* Enhanced background with subtle pattern */}
-                <div className="w-24 h-80 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
-                  {/* Subtle grid pattern */}
-                  <div className="absolute inset-0 opacity-30">
-                    {[20, 40, 60, 80].map(line => (
-                      <div 
-                        key={line}
-                        className="absolute w-full border-t border-gray-300/40"
-                        style={{ bottom: `${line}%` }}
-                      ></div>
-                    ))}
-                  </div>
+              {/* Bar container with accurate proportional height */}
+              <div className="relative w-20">
+                {/* Background container - full height */}
+                <div className="w-full h-80 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
                   
-                  {/* Professional animated bar */}
+                  {/* Actual probability bar - proportional height */}
                   <div 
                     className="w-full absolute bottom-0 rounded-xl transition-all duration-1000 ease-out group-hover:scale-105"
                     style={{ 
                       height: `${height}%`,
-                      background: getBarGradient(probability as number),
-                      animation: 'slideUpProfessional 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      background: getBarColor(probability as number),
+                      animation: 'realBarGrowth 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                       transformOrigin: 'bottom',
                       boxShadow: `0 0 20px ${getGlowColor(probability as number)}, inset 0 1px 0 rgba(255,255,255,0.3)`,
+                      minHeight: height < 2 ? '8px' : 'auto', // Ensure very small values are still visible
                     }}
                   >
                     {/* Glass effect overlay */}
@@ -104,24 +112,29 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
                     {/* Animated shine effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out rounded-xl"></div>
                     
-                    {/* Top highlight */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-white/40 rounded-t-xl"></div>
+                    {/* Top highlight for visible bars */}
+                    {height > 5 && (
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-white/40 rounded-t-xl"></div>
+                    )}
                   </div>
                 </div>
               </div>
               
-              {/* Enhanced disease name label */}
-              <div className="mt-5 text-center max-w-28">
+              {/* Disease name label */}
+              <div className="mt-4 text-center max-w-24">
                 <span className="text-sm font-semibold text-gray-700 leading-tight block transition-all duration-300 group-hover:text-gray-900 group-hover:scale-105">
                   {formatDiseaseName(disease)}
                 </span>
               </div>
 
-              {/* Professional tooltip */}
-              <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-4 py-3 rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700/50">
+              {/* Enhanced tooltip */}
+              <div className="absolute -top-24 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-4 py-3 rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700/50">
                 <div className="text-center">
                   <div className="font-semibold">{formatDiseaseName(disease)}</div>
-                  <div className="text-gray-300 text-xs mt-1">Risk Level: {percentage}%</div>
+                  <div className="text-gray-300 text-xs mt-1">Probability: {percentage}%</div>
+                  <div className={`text-xs mt-1 font-medium ${riskInfo.color.replace('text-', 'text-')}`}>
+                    {riskInfo.text}
+                  </div>
                 </div>
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900/95"></div>
               </div>
@@ -130,10 +143,30 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
         })}
       </div>
 
+      {/* Enhanced legend */}
+      <div className="flex justify-center items-center gap-6 mb-6">
+        <div className="flex items-center text-xs text-gray-600">
+          <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-red-600 rounded mr-2"></div>
+          <span>High Risk (70%+)</span>
+        </div>
+        <div className="flex items-center text-xs text-gray-600">
+          <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-orange-600 rounded mr-2"></div>
+          <span>Elevated Risk (50-70%)</span>
+        </div>
+        <div className="flex items-center text-xs text-gray-600">
+          <div className="w-3 h-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded mr-2"></div>
+          <span>Moderate Risk (30-50%)</span>
+        </div>
+        <div className="flex items-center text-xs text-gray-600">
+          <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-green-600 rounded mr-2"></div>
+          <span>Low Risk (<30%)</span>
+        </div>
+      </div>
+
       {/* Professional footer note */}
       <div className="text-center pt-4 border-t border-gray-200/50">
         <p className="text-xs text-gray-500 font-medium">
-          Professional AI Analysis • Medical Grade Assessment
+          Proportional Probability Visualization • AI-Powered Medical Analysis
         </p>
       </div>
     </div>
