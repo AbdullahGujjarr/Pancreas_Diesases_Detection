@@ -159,7 +159,7 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
         </div>
         <div className="flex items-center text-xs text-gray-600">
           <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-green-600 rounded mr-2"></div>
-          <span>Low Risk (<30%)</span>
+          <span>Low Risk (&lt;30%)</span>
         </div>
       </div>
 
