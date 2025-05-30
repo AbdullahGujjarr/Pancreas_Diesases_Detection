@@ -77,6 +77,13 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
               key={disease} 
               className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105"
             >
+              {/* Percentage label only - clean and simple */}
+              <div className="mb-4 px-3 py-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-md border border-gray-200/50 transition-all duration-300 group-hover:shadow-lg">
+                <span className="text-lg font-bold text-gray-800 group-hover:text-gray-900">
+                  {percentage}%
+                </span>
+              </div>
+              
               {/* Bar container with accurate proportional height */}
               <div className="relative w-20">
                 {/* Background container - full height */}
