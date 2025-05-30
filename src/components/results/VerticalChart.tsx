@@ -65,7 +65,8 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
       
       <h3 className="text-lg font-semibold text-gray-600 mb-10 text-center tracking-wide">Probability Distribution</h3>
       
-      <div className="flex justify-center items-end gap-8 h-96 mb-8">
+      {/* Chart container with improved spacing */}
+      <div className="flex justify-center items-end gap-4 sm:gap-6 md:gap-8 h-96 mb-8 px-4">
         {sortedData.map(([disease, probability]) => {
           // Calculate proportional height based on actual probability (0-100% of container)
           const height = (probability as number) * 100;
@@ -75,24 +76,24 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
           return (
             <div 
               key={disease} 
-              className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105"
+              className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105 min-w-[80px] max-w-[100px]"
             >
-              {/* Percentage label with risk indicator */}
-              <div className="mb-4 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
+              {/* Percentage label with risk indicator - positioned above bar */}
+              <div className="mb-4 px-2 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200/50 transition-all duration-300 group-hover:shadow-xl group-hover:scale-110 z-10">
                 <div className="text-center">
-                  <span className="text-xl font-bold text-gray-800 group-hover:text-gray-900 block">
+                  <span className="text-lg font-bold text-gray-800 group-hover:text-gray-900 block leading-tight">
                     {percentage}%
                   </span>
-                  <span className={`text-xs font-medium ${riskInfo.color}`}>
+                  <span className={`text-xs font-medium ${riskInfo.color} leading-tight`}>
                     {riskInfo.text}
                   </span>
                 </div>
               </div>
               
               {/* Bar container with accurate proportional height */}
-              <div className="relative w-20">
+              <div className="relative w-16 sm:w-18 md:w-20">
                 {/* Background container - full height */}
-                <div className="w-full h-80 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
+                <div className="w-full h-64 sm:h-72 md:h-80 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
                   
                   {/* Actual probability bar - proportional height */}
                   <div 
@@ -120,15 +121,15 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
                 </div>
               </div>
               
-              {/* Disease name label */}
-              <div className="mt-4 text-center max-w-24">
-                <span className="text-sm font-semibold text-gray-700 leading-tight block transition-all duration-300 group-hover:text-gray-900 group-hover:scale-105">
+              {/* Disease name label - positioned below bar with proper spacing */}
+              <div className="mt-4 text-center w-full px-1">
+                <span className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight block transition-all duration-300 group-hover:text-gray-900 group-hover:scale-105 break-words">
                   {formatDiseaseName(disease)}
                 </span>
               </div>
 
-              {/* Enhanced tooltip */}
-              <div className="absolute -top-24 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-4 py-3 rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700/50">
+              {/* Enhanced tooltip - only shows on hover */}
+              <div className="absolute -top-32 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-4 py-3 rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 shadow-2xl border border-gray-700/50">
                 <div className="text-center">
                   <div className="font-semibold">{formatDiseaseName(disease)}</div>
                   <div className="text-gray-300 text-xs mt-1">Probability: {percentage}%</div>
@@ -143,23 +144,23 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
         })}
       </div>
 
-      {/* Enhanced legend */}
-      <div className="flex justify-center items-center gap-6 mb-6">
+      {/* Enhanced legend with responsive layout */}
+      <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 mb-6">
         <div className="flex items-center text-xs text-gray-600">
           <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-red-600 rounded mr-2"></div>
           <span>High Risk (70%+)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
           <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-orange-600 rounded mr-2"></div>
-          <span>Elevated Risk (50-70%)</span>
+          <span>Elevated (50-70%)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
           <div className="w-3 h-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded mr-2"></div>
-          <span>Moderate Risk (30-50%)</span>
+          <span>Moderate (30-50%)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
           <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-green-600 rounded mr-2"></div>
-          <span>Low Risk (&lt;30%)</span>
+          <span>Low (&lt;30%)</span>
         </div>
       </div>
 
