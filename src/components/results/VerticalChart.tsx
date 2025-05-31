@@ -36,14 +36,6 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
     }
   };
 
-  const getGlowColor = (probability: number) => {
-    if (probability > 0.7) return 'rgba(255, 71, 87, 0.6)';
-    if (probability > 0.5) return 'rgba(255, 99, 72, 0.6)';
-    if (probability > 0.3) return 'rgba(255, 177, 66, 0.6)';
-    if (probability > 0.1) return 'rgba(38, 222, 129, 0.6)';
-    return 'rgba(46, 213, 115, 0.6)';
-  };
-
   const getRiskLabel = (probability: number) => {
     if (probability > 0.7) return { text: 'High Risk', color: 'text-red-600' };
     if (probability > 0.5) return { text: 'Elevated Risk', color: 'text-orange-600' };
@@ -65,7 +57,7 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
       
       <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-600 mb-6 sm:mb-8 lg:mb-10 text-center tracking-wide">Probability Distribution</h3>
       
-      {/* Enhanced responsive chart container without horizontal scroll */}
+      {/* Chart container without animations */}
       <div className="flex justify-center items-end gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-6 h-64 sm:h-80 lg:h-96 mb-6 sm:mb-8 px-2">
         {sortedData.map(([disease, probability]) => {
           // Calculate proportional height based on actual probability (0-100% of container)
@@ -76,58 +68,52 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
           return (
             <div 
               key={disease} 
-              className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105 flex-1 min-w-0 max-w-16 sm:max-w-20 lg:max-w-24"
+              className="flex flex-col items-center group relative cursor-pointer flex-1 min-w-0 max-w-16 sm:max-w-20 lg:max-w-24"
             >
-              {/* Percentage label with enhanced styling */}
-              <div className="mb-2 sm:mb-3 lg:mb-4 px-1 sm:px-2 lg:px-3 py-1 sm:py-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200/50 transition-all duration-300 group-hover:shadow-xl group-hover:bg-white">
-                <span className="text-xs sm:text-sm lg:text-base font-bold text-gray-800 group-hover:text-gray-900">
+              {/* Percentage label */}
+              <div className="mb-2 sm:mb-3 lg:mb-4 px-1 sm:px-2 lg:px-3 py-1 sm:py-2 bg-white/95 backdrop-blur-sm rounded-lg border border-gray-200/50">
+                <span className="text-xs sm:text-sm lg:text-base font-bold text-gray-800">
                   {percentage}%
                 </span>
               </div>
               
-              {/* Bar container with enhanced responsiveness */}
+              {/* Bar container */}
               <div className="relative w-full">
-                {/* Background container with enhanced styling */}
-                <div className="w-full h-48 sm:h-64 lg:h-80 bg-gradient-to-b from-gray-100 via-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
+                {/* Background container */}
+                <div className="w-full h-48 sm:h-64 lg:h-80 bg-gradient-to-b from-gray-100 via-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 overflow-hidden">
                   
-                  {/* Enhanced probability bar with improved colors and effects */}
+                  {/* Probability bar - no animations or shadows */}
                   <div 
-                    className="w-full absolute bottom-0 rounded-xl transition-all duration-1000 ease-out group-hover:scale-105"
+                    className="w-full absolute bottom-0 rounded-xl"
                     style={{ 
                       height: `${height}%`,
                       background: getBarColor(probability as number),
-                      animation: 'realBarGrowth 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                      transformOrigin: 'bottom',
-                      boxShadow: `0 0 25px ${getGlowColor(probability as number)}, 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.1)`,
                       minHeight: height < 2 ? '8px' : 'auto',
                     }}
                   >
-                    {/* Enhanced glass effect overlay */}
+                    {/* Glass effect overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/15 to-white/30 rounded-xl"></div>
                     
-                    {/* Enhanced animated shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out rounded-xl"></div>
-                    
-                    {/* Enhanced top highlight for visible bars */}
+                    {/* Top highlight for visible bars */}
                     {height > 5 && (
                       <div className="absolute top-0 left-0 right-0 h-1 sm:h-1.5 bg-gradient-to-r from-white/60 via-white/80 to-white/60 rounded-t-xl"></div>
                     )}
                     
-                    {/* Additional depth effect */}
+                    {/* Bottom depth effect */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-black/10 via-transparent to-black/10 rounded-b-xl"></div>
                   </div>
                 </div>
               </div>
               
-              {/* Disease name label with enhanced styling */}
+              {/* Disease name label */}
               <div className="mt-2 sm:mt-3 lg:mt-4 text-center w-full">
-                <span className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight block transition-all duration-300 group-hover:text-gray-900 group-hover:scale-105 break-words px-1">
+                <span className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight block break-words px-1">
                   {formatDiseaseName(disease)}
                 </span>
               </div>
 
-              {/* Enhanced tooltip with improved styling */}
-              <div className="absolute -top-20 sm:-top-24 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700/50">
+              {/* Tooltip */}
+              <div className="absolute -top-20 sm:-top-24 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-20 border border-gray-700/50">
                 <div className="text-center">
                   <div className="font-semibold">{formatDiseaseName(disease)}</div>
                   <div className="text-gray-300 text-xs mt-1">Probability: {percentage}%</div>
@@ -142,27 +128,27 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
         })}
       </div>
 
-      {/* Enhanced legend with improved visual hierarchy */}
+      {/* Legend */}
       <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6">
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-red-500 via-red-600 to-red-700 rounded mr-1 sm:mr-2 shadow-sm"></div>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-red-500 via-red-600 to-red-700 rounded mr-1 sm:mr-2"></div>
           <span className="whitespace-nowrap">High Risk (70%+)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 rounded mr-1 sm:mr-2 shadow-sm"></div>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 rounded mr-1 sm:mr-2"></div>
           <span className="whitespace-nowrap">Elevated (50-70%)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 rounded mr-1 sm:mr-2 shadow-sm"></div>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 rounded mr-1 sm:mr-2"></div>
           <span className="whitespace-nowrap">Moderate (30-50%)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-green-500 via-green-600 to-green-700 rounded mr-1 sm:mr-2 shadow-sm"></div>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-green-500 via-green-600 to-green-700 rounded mr-1 sm:mr-2"></div>
           <span className="whitespace-nowrap">Low (&lt;30%)</span>
         </div>
       </div>
 
-      {/* Enhanced professional footer note */}
+      {/* Footer note */}
       <div className="text-center pt-3 sm:pt-4 border-t border-gray-200/50">
         <p className="text-xs text-gray-500 font-medium">
           Proportional Probability Visualization • AI-Powered Medical Analysis
