@@ -219,6 +219,18 @@ const levenshteinDistance = (a: string, b: string): number => {
 const findFaqMatch = (message: string): string | null => {
   const faqs: FAQ[] = [
     {
+      question: "your pancreatic scan results",
+      answer: "Your pancreatic scan results show the AI analysis of your medical imaging. The results display probability percentages for four different pancreatic conditions: pancreatic cancer, chronic pancreatitis, pancreatic cysts, and acute pancreatitis. Each percentage indicates the likelihood of that condition based on the scan analysis. The colored bars help visualize risk levels - green for low risk, yellow for moderate risk, and red for higher risk. You can also view a heatmap overlay that highlights areas of concern in your scan. Remember, these are screening results that should always be discussed with your healthcare provider for proper medical interpretation."
+    },
+    {
+      question: "pancreatic conditions and symptoms",
+      answer: "Pancreatic conditions can present with various symptoms depending on the specific disease:\n\n**Pancreatic Cancer:** Often has few early symptoms. Advanced symptoms include persistent abdominal pain (radiating to back), jaundice, unintended weight loss, new-onset diabetes, and digestive problems.\n\n**Chronic Pancreatitis:** Persistent abdominal pain, digestive issues due to enzyme deficiency, diabetes from insulin deficiency, and steatorrhea (fatty stools).\n\n**Pancreatic Cysts:** Usually asymptomatic and found incidentally. Large cysts may cause abdominal pain or feeling of fullness.\n\n**Acute Pancreatitis:** Severe abdominal pain (often sudden onset), nausea, vomiting, fever, and tenderness.\n\nIf you experience persistent symptoms, especially abdominal pain or unexplained weight loss, consult a healthcare provider promptly."
+    },
+    {
+      question: "how to use this analysis system",
+      answer: "Here's how to use the PancreScan analysis system:\n\n**1. Upload Your Scan:**\n• Go to the Upload page\n• Drag and drop your medical image or click to browse\n• Supported formats: DICOM (.dcm), JPG, PNG\n• DICOM files provide the most accurate analysis\n\n**2. View Results:**\n• After processing, you'll see probability percentages for each condition\n• Review the colored risk indicators (green=low, yellow=moderate, red=high)\n• Toggle the heatmap overlay to see areas of concern\n\n**3. Get More Information:**\n• Click 'Discuss Results with AI Assistant' for detailed explanations\n• Download a PDF report for your medical records\n• Use the chatbot to ask specific questions about your results\n\n**4. Next Steps:**\n• Always discuss results with your healthcare provider\n• Bring the PDF report to your medical appointment\n• Follow up as recommended by your doctor"
+    },
+    {
       question: "what is pancreatic cancer",
       answer: "Pancreatic cancer is a disease where malignant (cancerous) cells form in the tissues of the pancreas. It typically has few symptoms in its early stages, which makes early detection challenging. Common symptoms in advanced stages include abdominal pain, jaundice, weight loss, and digestive problems. Risk factors include smoking, obesity, diabetes, family history, and certain genetic conditions. Early detection and treatment significantly improve survival rates."
     },
