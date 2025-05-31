@@ -53,19 +53,20 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-white to-gray-50/50 p-8 rounded-2xl shadow-xl border border-gray-100/50 backdrop-blur-sm">
-      <div className="flex items-center mb-8">
-        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mr-4 flex items-center justify-center shadow-lg">
-          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+    <div className="bg-gradient-to-br from-white to-gray-50/50 p-4 sm:p-6 lg:p-8 rounded-2xl shadow-xl border border-gray-100/50 backdrop-blur-sm">
+      <div className="flex items-center mb-6 sm:mb-8">
+        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mr-3 sm:mr-4 flex items-center justify-center shadow-lg">
+          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{title}</h2>
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{title}</h2>
       </div>
       
-      <h3 className="text-lg font-semibold text-gray-600 mb-10 text-center tracking-wide">Probability Distribution</h3>
+      <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-600 mb-6 sm:mb-8 lg:mb-10 text-center tracking-wide">Probability Distribution</h3>
       
-      <div className="flex justify-center items-end gap-8 h-96 mb-8">
+      {/* Responsive chart container */}
+      <div className="flex justify-center items-end gap-2 sm:gap-4 lg:gap-8 h-64 sm:h-80 lg:h-96 mb-6 sm:mb-8 overflow-x-auto">
         {sortedData.map(([disease, probability]) => {
           // Calculate proportional height based on actual probability (0-100% of container)
           const height = (probability as number) * 100;
@@ -75,19 +76,19 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
           return (
             <div 
               key={disease} 
-              className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105"
+              className="flex flex-col items-center group relative cursor-pointer transform transition-all duration-500 hover:scale-105 min-w-0 flex-shrink-0"
             >
-              {/* Percentage label only - clean and simple */}
-              <div className="mb-4 px-3 py-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-md border border-gray-200/50 transition-all duration-300 group-hover:shadow-lg">
-                <span className="text-lg font-bold text-gray-800 group-hover:text-gray-900">
+              {/* Percentage label only - responsive sizing */}
+              <div className="mb-2 sm:mb-3 lg:mb-4 px-2 sm:px-3 py-1 sm:py-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-md border border-gray-200/50 transition-all duration-300 group-hover:shadow-lg">
+                <span className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 group-hover:text-gray-900">
                   {percentage}%
                 </span>
               </div>
               
-              {/* Bar container with accurate proportional height */}
-              <div className="relative w-20">
-                {/* Background container - full height */}
-                <div className="w-full h-80 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
+              {/* Bar container with responsive width */}
+              <div className="relative w-12 sm:w-16 lg:w-20">
+                {/* Background container - responsive height */}
+                <div className="w-full h-48 sm:h-64 lg:h-80 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl relative border border-gray-200/70 group-hover:border-gray-300/70 transition-all duration-500 overflow-hidden shadow-inner">
                   
                   {/* Actual probability bar - proportional height */}
                   <div 
@@ -115,15 +116,15 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
                 </div>
               </div>
               
-              {/* Disease name label */}
-              <div className="mt-4 text-center max-w-24">
-                <span className="text-sm font-semibold text-gray-700 leading-tight block transition-all duration-300 group-hover:text-gray-900 group-hover:scale-105">
+              {/* Disease name label - responsive text */}
+              <div className="mt-2 sm:mt-3 lg:mt-4 text-center max-w-16 sm:max-w-20 lg:max-w-24">
+                <span className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight block transition-all duration-300 group-hover:text-gray-900 group-hover:scale-105 break-words">
                   {formatDiseaseName(disease)}
                 </span>
               </div>
 
-              {/* Enhanced tooltip */}
-              <div className="absolute -top-24 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-4 py-3 rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700/50">
+              {/* Enhanced tooltip - responsive positioning */}
+              <div className="absolute -top-20 sm:-top-24 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700/50">
                 <div className="text-center">
                   <div className="font-semibold">{formatDiseaseName(disease)}</div>
                   <div className="text-gray-300 text-xs mt-1">Probability: {percentage}%</div>
@@ -138,28 +139,28 @@ const VerticalChart: React.FC<VerticalChartProps> = ({ data, title }) => {
         })}
       </div>
 
-      {/* Enhanced legend */}
-      <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 mb-6">
+      {/* Enhanced legend - responsive layout */}
+      <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6">
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-red-600 rounded mr-2"></div>
-          <span>High Risk (70%+)</span>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-red-500 to-red-600 rounded mr-1 sm:mr-2"></div>
+          <span className="whitespace-nowrap">High Risk (70%+)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-orange-600 rounded mr-2"></div>
-          <span>Elevated (50-70%)</span>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-orange-500 to-orange-600 rounded mr-1 sm:mr-2"></div>
+          <span className="whitespace-nowrap">Elevated (50-70%)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-3 h-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded mr-2"></div>
-          <span>Moderate (30-50%)</span>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded mr-1 sm:mr-2"></div>
+          <span className="whitespace-nowrap">Moderate (30-50%)</span>
         </div>
         <div className="flex items-center text-xs text-gray-600">
-          <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-green-600 rounded mr-2"></div>
-          <span>Low (&lt;30%)</span>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-green-500 to-green-600 rounded mr-1 sm:mr-2"></div>
+          <span className="whitespace-nowrap">Low (&lt;30%)</span>
         </div>
       </div>
 
-      {/* Professional footer note */}
-      <div className="text-center pt-4 border-t border-gray-200/50">
+      {/* Professional footer note - responsive text */}
+      <div className="text-center pt-3 sm:pt-4 border-t border-gray-200/50">
         <p className="text-xs text-gray-500 font-medium">
           Proportional Probability Visualization • AI-Powered Medical Analysis
         </p>

@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, X, Image, FileWarning, CheckCircle, Info } from 'lucide-react';
@@ -99,19 +100,19 @@ const UploadPage: React.FC = () => {
   };
 
   return (
-    <div className="py-12 bg-gray-50 min-h-[calc(100vh-64px)]">
+    <div className="py-6 sm:py-8 lg:py-12 bg-gray-50 min-h-[calc(100vh-64px)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Upload Pancreatic Scan</h1>
-          <p className="mt-4 text-lg text-gray-600">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Upload Pancreatic Scan</h1>
+          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-gray-600 px-2">
             Upload your pancreatic image for AI analysis. We support JPG, PNG, and DICOM files.
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="card mb-8">
+          <div className="card mb-6 sm:mb-8">
             <div 
-              className={`border-2 border-dashed rounded-lg p-8 text-center ${
+              className={`border-2 border-dashed rounded-lg p-4 sm:p-6 lg:p-8 text-center ${
                 isDragging 
                   ? 'border-primary bg-primary/5' 
                   : 'border-gray-300 hover:border-primary/50 hover:bg-gray-50'
@@ -122,12 +123,12 @@ const UploadPage: React.FC = () => {
               onClick={handleButtonClick}
             >
               {!file ? (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex justify-center">
-                    <Upload className="h-12 w-12 text-gray-400" />
+                    <Upload className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 text-gray-400" />
                   </div>
                   <div>
-                    <p className="text-lg font-medium text-gray-700">
+                    <p className="text-base sm:text-lg font-medium text-gray-700">
                       Drag and drop your image here
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
@@ -148,7 +149,7 @@ const UploadPage: React.FC = () => {
                     }}
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 z-10 hover:bg-red-600 transition-colors duration-200"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
                   </button>
                   
                   {preview ? (
@@ -156,18 +157,18 @@ const UploadPage: React.FC = () => {
                       <img 
                         src={preview} 
                         alt="Upload preview" 
-                        className="max-h-64 max-w-full rounded object-contain"
+                        className="max-h-48 sm:max-h-56 lg:max-h-64 max-w-full rounded object-contain"
                       />
-                      <p className="mt-2 text-sm text-gray-600">
+                      <p className="mt-2 text-xs sm:text-sm text-gray-600 break-all px-2">
                         {file.name} ({(file.size / 1024).toFixed(0)} KB)
                       </p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <div className="h-64 w-64 bg-gray-200 rounded flex items-center justify-center">
-                        <Image className="h-16 w-16 text-gray-400" />
+                      <div className="h-48 w-48 sm:h-56 sm:w-56 lg:h-64 lg:w-64 bg-gray-200 rounded flex items-center justify-center">
+                        <Image className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 text-gray-400" />
                       </div>
-                      <p className="mt-2 text-sm text-gray-600">
+                      <p className="mt-2 text-xs sm:text-sm text-gray-600 break-all px-2">
                         DICOM file: {file.name} ({(file.size / 1024).toFixed(0)} KB)
                       </p>
                     </div>
@@ -189,14 +190,14 @@ const UploadPage: React.FC = () => {
             </div>
           </div>
 
-          {/* File Format Information */}
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* File Format Information - responsive grid */}
+          <div className="mb-6 sm:mb-8 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div className="card bg-blue-50 border border-blue-200">
               <div className="flex items-start">
-                <Info className="h-6 w-6 text-blue-600 mr-3 flex-shrink-0 mt-1" />
+                <Info className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mr-2 sm:mr-3 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-medium text-blue-900 mb-2">Standard Image Formats</h3>
-                  <p className="text-sm text-blue-800">
+                  <h3 className="font-medium text-blue-900 mb-1 sm:mb-2 text-sm sm:text-base">Standard Image Formats</h3>
+                  <p className="text-xs sm:text-sm text-blue-800">
                     JPEG and PNG files from ultrasound, CT, or MRI screenshots can be analyzed, 
                     but may provide lower accuracy compared to DICOM files.
                   </p>
@@ -206,10 +207,10 @@ const UploadPage: React.FC = () => {
             
             <div className="card bg-green-50 border border-green-200">
               <div className="flex items-start">
-                <CheckCircle className="h-6 w-6 text-green-600 mr-3 flex-shrink-0 mt-1" />
+                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 mr-2 sm:mr-3 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-medium text-green-900 mb-2">DICOM Medical Format</h3>
-                  <p className="text-sm text-green-800">
+                  <h3 className="font-medium text-green-900 mb-1 sm:mb-2 text-sm sm:text-base">DICOM Medical Format</h3>
+                  <p className="text-xs sm:text-sm text-green-800">
                     For optimal results, upload DICOM (.dcm) files directly from your CT or MRI scan,
                     which preserve all medical imaging data for accurate analysis.
                   </p>
@@ -219,12 +220,12 @@ const UploadPage: React.FC = () => {
           </div>
 
           {/* Privacy Notice */}
-          <div className="card bg-gray-50 border border-gray-200 mb-8">
+          <div className="card bg-gray-50 border border-gray-200 mb-6 sm:mb-8">
             <div className="flex items-start">
-              <FileWarning className="h-6 w-6 text-gray-500 mr-3 flex-shrink-0 mt-1" />
+              <FileWarning className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 mr-2 sm:mr-3 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-medium text-gray-900 mb-1">Privacy Notice</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-medium text-gray-900 mb-1 text-sm sm:text-base">Privacy Notice</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
                   Your images are processed securely and are not stored permanently on our servers.
                   All analysis is performed in your browser and through secure API calls.
                   We recommend removing any personal identifying information from images before upload.
@@ -237,7 +238,7 @@ const UploadPage: React.FC = () => {
             <button
               type="submit"
               disabled={!file || isLoading}
-              className={`btn btn-primary px-8 py-3 flex items-center ${
+              className={`btn btn-primary px-6 sm:px-8 py-2 sm:py-3 flex items-center text-sm sm:text-base ${
                 (!file || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -249,7 +250,7 @@ const UploadPage: React.FC = () => {
               ) : (
                 <>
                   Analyze Image
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                 </>
               )}
             </button>
