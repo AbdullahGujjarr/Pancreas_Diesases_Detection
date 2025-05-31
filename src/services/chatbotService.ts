@@ -9,6 +9,45 @@ interface FAQ {
 }
 
 /**
+ * Get initial greeting with conversation starters
+ */
+export const getInitialGreeting = (): string => {
+  return `👋 **Welcome to PancreScan AI Assistant!**
+
+I'm here to help you understand your pancreatic scan results and answer any questions about pancreatic conditions. 
+
+**I can help you with:**
+• 🔬 **Explaining your analysis results** - What do the percentages mean?
+• 📊 **Understanding the risk levels** - What should you be concerned about?
+• 🏥 **Medical information** - Learn about pancreatic conditions
+• 📋 **Next steps** - What to discuss with your healthcare provider
+• 💡 **Using this system** - How to upload scans or download reports
+
+**Quick conversation starters:**
+• "What does my highest risk result mean?"
+• "Explain my analysis results"
+• "What is pancreatic cancer?"
+• "How accurate is this AI analysis?"
+• "What should I do next?"
+
+Feel free to ask me anything about your results or pancreatic health! 😊`;
+};
+
+/**
+ * Get positive acknowledgment responses
+ */
+const getPositiveResponse = (): string => {
+  const responses = [
+    "Great question! 😊",
+    "I'm happy to help with that! 👍",
+    "Excellent! Let me explain that for you. ✨",
+    "That's a very important question! 💡",
+    "I'm glad you asked about that! 🌟"
+  ];
+  return responses[Math.floor(Math.random() * responses.length)];
+};
+
+/**
  * Process user message and return chatbot response
  */
 export const chatbotRespond = async (
@@ -22,39 +61,156 @@ export const chatbotRespond = async (
   if (!lowerMessage) {
     return "I'm here to help with your questions about pancreatic conditions and analysis results. What would you like to know?";
   }
+
+  // Check for greeting/positive user responses
+  if (isGreetingOrPositive(lowerMessage)) {
+    return handleGreetingResponse(lowerMessage);
+  }
   
   // Check for FAQ matches first
   const faqMatch = findFaqMatch(lowerMessage);
   if (faqMatch) {
-    return faqMatch;
+    return `${getPositiveResponse()}\n\n${faqMatch}`;
   }
   
   // Check for results-specific questions if results are available
   if (results) {
     const resultsResponse = handleResultsQuestion(lowerMessage, results);
     if (resultsResponse) {
-      return resultsResponse;
+      return `${getPositiveResponse()}\n\n${resultsResponse}`;
     }
   }
   
   // Check for pancreas-related questions
   const pancreasResponse = handlePancreasQuestion(lowerMessage);
   if (pancreasResponse) {
-    return pancreasResponse;
+    return `${getPositiveResponse()}\n\n${pancreasResponse}`;
   }
   
   // Check for system usage questions
   const usageResponse = handleUsageQuestion(lowerMessage);
   if (usageResponse) {
-    return usageResponse;
+    return `${getPositiveResponse()}\n\n${usageResponse}`;
+  }
+  
+  // Check for gratitude or satisfaction
+  if (isGratitudeMessage(lowerMessage)) {
+    return handleGratitudeResponse();
   }
   
   // Default response for unrecognized questions
   if (isOfftopic(lowerMessage)) {
-    return "I'm specifically designed to help with pancreas-related questions, analysis results, and how to use this system. Could you please ask a question related to these topics?";
+    return "I'm specifically designed to help with pancreas-related questions, analysis results, and how to use this system. Could you please ask a question related to these topics? 😊";
   }
   
-  return "I'm not sure I understand your question. Could you try rephrasing it or ask about pancreatic conditions, your results, or how to use this system?";
+  return "I'm not sure I understand your question. Could you try rephrasing it or ask about:\n• Your pancreatic scan results\n• Pancreatic conditions and symptoms\n• How to use this analysis system\n\nI'm here to help! 💙";
+};
+
+/**
+ * Check if message is a greeting or positive response
+ */
+const isGreetingOrPositive = (message: string): boolean => {
+  const greetings = [
+    'hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
+    'thanks', 'thank you', 'great', 'awesome', 'perfect', 'excellent',
+    'yes', 'okay', 'ok', 'sure', 'sounds good'
+  ];
+  
+  return greetings.some(greeting => message.includes(greeting));
+};
+
+/**
+ * Handle greeting or positive responses
+ */
+const handleGreetingResponse = (message: string): string => {
+  if (message.includes('thank') || message.includes('thanks')) {
+    return "You're very welcome! 😊 I'm here whenever you need help understanding your results or have questions about pancreatic health. Is there anything specific you'd like to know more about?";
+  }
+  
+  if (message.includes('great') || message.includes('awesome') || message.includes('perfect') || message.includes('excellent')) {
+    return "I'm so glad that was helpful! 🌟 Feel free to ask me anything else about your scan results, pancreatic conditions, or how to use this system. What would you like to explore next?";
+  }
+  
+  if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+    return "Hello there! 👋 I'm your PancreScan AI assistant, ready to help you understand your analysis results and answer questions about pancreatic health. What can I help you with today?";
+  }
+  
+  return "Great! I'm here to help you with any questions about your scan results or pancreatic conditions. What would you like to know? 😊";
+};
+
+/**
+ * Check if message expresses gratitude
+ */
+const isGratitudeMessage = (message: string): boolean => {
+  const gratitudeWords = [
+    'thank you', 'thanks', 'appreciate', 'grateful', 'helpful',
+    'that helped', 'that was helpful', 'good to know'
+  ];
+  
+  return gratitudeWords.some(word => message.includes(word));
+};
+
+/**
+ * Handle gratitude responses
+ */
+const handleGratitudeResponse = (): string => {
+  const responses = [
+    "You're so welcome! 😊 I'm really glad I could help you understand better. Remember, it's always important to discuss these results with your healthcare provider. Is there anything else you'd like to know?",
+    "I'm happy I could help! 🌟 If you have any other questions about your results or pancreatic health, just ask. I'm here for you!",
+    "My pleasure! 💙 Understanding your health information is so important. Feel free to ask me anything else - I'm here to support you through this process.",
+    "You're very welcome! 😊 That's exactly what I'm here for. Don't hesitate to reach out if you think of any other questions!"
+  ];
+  
+  return responses[Math.floor(Math.random() * responses.length)];
+};
+
+/**
+ * Check if a question is likely off-topic
+ */
+const isOfftopic = (message: string): boolean => {
+  const pancreasTerms = [
+    'pancreas', 'pancreat', 'dicom', 'scan', 'imaging', 'cancer', 'cyst', 
+    'tumor', 'inflammation', 'analysis', 'result', 'doctor', 'symptom', 
+    'treatment', 'diagnosis', 'report', 'image', 'upload', 'heatmap', 'pdf',
+    'medical', 'disease', 'condition', 'health'
+  ];
+  
+  // Check if message contains any pancreas-related terms
+  return !pancreasTerms.some(term => message.includes(term));
+};
+
+/**
+ * Calculate Levenshtein distance between two strings
+ * (Helper function for fuzzy matching FAQ questions)
+ */
+const levenshteinDistance = (a: string, b: string): number => {
+  const matrix = [];
+  
+  // Initialize matrix
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+  
+  // Fill in the rest of the matrix
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1,     // insertion
+          matrix[i - 1][j] + 1      // deletion
+        );
+      }
+    }
+  }
+  
+  return matrix[b.length][a.length];
 };
 
 /**
@@ -202,53 +358,4 @@ const handleUsageQuestion = (message: string): string | null => {
   }
   
   return null;
-};
-
-/**
- * Check if a question is likely off-topic
- */
-const isOfftopic = (message: string): boolean => {
-  const pancreasTerms = [
-    'pancreas', 'pancreat', 'dicom', 'scan', 'imaging', 'cancer', 'cyst', 
-    'tumor', 'inflammation', 'analysis', 'result', 'doctor', 'symptom', 
-    'treatment', 'diagnosis', 'report', 'image', 'upload', 'heatmap', 'pdf',
-    'medical', 'disease', 'condition', 'health'
-  ];
-  
-  // Check if message contains any pancreas-related terms
-  return !pancreasTerms.some(term => message.includes(term));
-};
-
-/**
- * Calculate Levenshtein distance between two strings
- * (Helper function for fuzzy matching FAQ questions)
- */
-const levenshteinDistance = (a: string, b: string): number => {
-  const matrix = [];
-  
-  // Initialize matrix
-  for (let i = 0; i <= b.length; i++) {
-    matrix[i] = [i];
-  }
-  
-  for (let j = 0; j <= a.length; j++) {
-    matrix[0][j] = j;
-  }
-  
-  // Fill in the rest of the matrix
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1,     // insertion
-          matrix[i - 1][j] + 1      // deletion
-        );
-      }
-    }
-  }
-  
-  return matrix[b.length][a.length];
 };

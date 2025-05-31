@@ -4,7 +4,7 @@ import { Download, ArrowLeft, MessageCircle, X, Send, TrendingDown, TrendingUp }
 import HeatmapViewer from '../components/results/HeatmapViewer';
 import VerticalChart from '../components/results/VerticalChart';
 import { generatePdfReport } from '../services/pdfService';
-import { chatbotRespond } from '../services/chatbotService';
+import { chatbotRespond, getInitialGreeting } from '../services/chatbotService';
 
 interface ChatMessage {
   id: string;
@@ -82,7 +82,7 @@ const ResultsPage: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      text: 'Hello! I\'m your PancreScan AI assistant. I can help you understand your results and answer questions about pancreatic conditions.',
+      text: getInitialGreeting(),
       sender: 'bot',
       timestamp: new Date(),
     },
