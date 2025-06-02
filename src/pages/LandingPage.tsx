@@ -1,8 +1,16 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, FileCheck, ShieldCheck, LineChart, Brain } from 'lucide-react';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const LandingPage: React.FC = () => {
+  const heroImageAnimation = useScrollAnimation(0.3);
+  const diseaseSection = useScrollAnimation(0.2);
+  const howItWorksSection = useScrollAnimation(0.2);
+  const featuresSection = useScrollAnimation(0.2);
+  const ctaSection = useScrollAnimation(0.2);
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -11,7 +19,7 @@ const LandingPage: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-primary to-transparent" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div className="text-center lg:text-left">
+            <div className="text-center lg:text-left animate-fade-in">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
                 Advanced Pancreatic Disease Detection
               </h1>
@@ -22,24 +30,31 @@ const LandingPage: React.FC = () => {
               <div className="mt-8 flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
                 <Link
                   to="/upload"
-                  className="btn bg-white text-primary hover:bg-blue-50 px-6 py-3 rounded-lg font-medium flex items-center justify-center"
+                  className="btn bg-white text-primary hover:bg-blue-50 px-6 py-3 rounded-lg font-medium flex items-center justify-center hover-scale"
                 >
                   Start Analysis
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
                 <a
                   href="#how-it-works"
-                  className="btn bg-transparent text-white border border-white hover:bg-white/10 px-6 py-3 rounded-lg font-medium flex items-center justify-center"
+                  className="btn bg-transparent text-white border border-white hover:bg-white/10 px-6 py-3 rounded-lg font-medium flex items-center justify-center hover-scale"
                 >
                   Learn More
                 </a>
               </div>
             </div>
-            <div className="hidden lg:block">
+            <div 
+              ref={heroImageAnimation.elementRef}
+              className={`hidden lg:block transition-all duration-1000 ease-out ${
+                heroImageAnimation.isVisible 
+                  ? 'opacity-100 transform translate-y-0 scale-100' 
+                  : 'opacity-0 transform translate-y-10 scale-95'
+              }`}
+            >
               <img 
                 src="https://images.pexels.com/photos/7089401/pexels-photo-7089401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
                 alt="Medical professional analyzing scan results" 
-                className="rounded-lg shadow-xl w-full object-cover max-h-[400px]"
+                className="rounded-lg shadow-xl w-full object-cover max-h-[400px] hover-scale"
               />
             </div>
           </div>
@@ -47,7 +62,14 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Disease Section */}
-      <section className="py-16 bg-white">
+      <section 
+        ref={diseaseSection.elementRef}
+        className={`py-16 bg-white transition-all duration-1000 ease-out ${
+          diseaseSection.isVisible 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform translate-y-20'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Detectable Conditions</h2>
@@ -86,7 +108,12 @@ const LandingPage: React.FC = () => {
             ].map((condition, index) => (
               <div 
                 key={index} 
-                className={`rounded-xl border ${condition.borderColor} p-6 transition-all duration-300 hover:shadow-md`}
+                className={`rounded-xl border ${condition.borderColor} p-6 transition-all duration-700 hover:shadow-md hover-scale ${
+                  diseaseSection.isVisible 
+                    ? 'opacity-100 transform translate-y-0' 
+                    : 'opacity-0 transform translate-y-10'
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className={`w-12 h-12 ${condition.color} rounded-full flex items-center justify-center mb-4`}>
                   <span className="text-xl font-bold">{index + 1}</span>
@@ -100,7 +127,15 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-16 bg-gray-50">
+      <section 
+        id="how-it-works" 
+        ref={howItWorksSection.elementRef}
+        className={`py-16 bg-gray-50 transition-all duration-1000 ease-out ${
+          howItWorksSection.isVisible 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform translate-y-20'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">How It Works</h2>
@@ -128,7 +163,15 @@ const LandingPage: React.FC = () => {
                 description: 'Receive a detailed report with disease probability scores, visualizations, and downloadable PDF summary.'
               }
             ].map((step, index) => (
-              <div key={index} className="card hover:shadow-lg transition-shadow duration-300 relative">
+              <div 
+                key={index} 
+                className={`card hover:shadow-lg transition-all duration-700 hover-scale relative ${
+                  howItWorksSection.isVisible 
+                    ? 'opacity-100 transform translate-y-0 scale-100' 
+                    : 'opacity-0 transform translate-y-10 scale-95'
+                }`}
+                style={{ transitionDelay: `${index * 150}ms` }}
+              >
                 <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-medium">
                   {index + 1}
                 </div>
@@ -142,7 +185,7 @@ const LandingPage: React.FC = () => {
           <div className="text-center mt-12">
             <Link
               to="/upload"
-              className="btn btn-primary px-8 py-3 inline-flex items-center"
+              className="btn btn-primary px-8 py-3 inline-flex items-center hover-scale"
             >
               Start Now
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -152,7 +195,14 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-white">
+      <section 
+        ref={featuresSection.elementRef}
+        className={`py-16 bg-white transition-all duration-1000 ease-out ${
+          featuresSection.isVisible 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform translate-y-20'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Key Features</h2>
@@ -185,7 +235,15 @@ const LandingPage: React.FC = () => {
                 description: 'View affected areas with advanced visualization techniques like Grad-CAM to highlight regions of concern.'
               }
             ].map((feature, index) => (
-              <div key={index} className="flex p-6 rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-300">
+              <div 
+                key={index} 
+                className={`flex p-6 rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-700 hover-scale ${
+                  featuresSection.isVisible 
+                    ? 'opacity-100 transform translate-x-0' 
+                    : 'opacity-0 transform translate-x-10'
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
                 <div className="flex-shrink-0 mr-4">{feature.icon}</div>
                 <div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -198,7 +256,14 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* CTA section */}
-      <section className="py-16 bg-gradient-to-r from-secondary to-secondary/80 text-white">
+      <section 
+        ref={ctaSection.elementRef}
+        className={`py-16 bg-gradient-to-r from-secondary to-secondary/80 text-white transition-all duration-1000 ease-out ${
+          ctaSection.isVisible 
+            ? 'opacity-100 transform translate-y-0 scale-100' 
+            : 'opacity-0 transform translate-y-10 scale-95'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to analyze your pancreatic scan?</h2>
           <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
@@ -206,7 +271,7 @@ const LandingPage: React.FC = () => {
           </p>
           <Link
             to="/upload"
-            className="btn bg-white text-secondary hover:bg-blue-50 px-8 py-3 rounded-lg font-medium inline-flex items-center"
+            className="btn bg-white text-secondary hover:bg-blue-50 px-8 py-3 rounded-lg font-medium inline-flex items-center hover-scale"
           >
             Start Analysis
             <ArrowRight className="ml-2 w-5 h-5" />
