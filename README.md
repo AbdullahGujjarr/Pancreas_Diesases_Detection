@@ -103,11 +103,15 @@ curl -X POST "http://localhost:8000/predict/" -F "file=@samples/Pancreatic\ Canc
 ![Pancreatic Cysts](https://github.com/user-attachments/assets/d2108999-9a4c-4fd0-bb5f-b29b9cc859cf)
 
 
-![Pancreatic Cancer](samples/Pancreatic%20Cancer.jpg)
+
 
 **Pancreatic Cysts Example**
 
 ![Pancreatic Cysts](samples/Pancreatic%20Cysts.jpg)
+
+## Results
+![result-page](https://github.com/user-attachments/assets/65a53c9d-5663-42a2-b600-205c908e94dc)
+![heat-map](https://github.com/user-attachments/assets/c661b3ca-ec1f-4fcc-b1f3-897186fcbcaf)
 
 ---
 
