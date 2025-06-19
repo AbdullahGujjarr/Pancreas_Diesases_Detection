@@ -160,7 +160,7 @@ const calculateProbabilities = (features: {
       pancreaticCancer = 0.03 + Math.random() * 0.07;
       break;
       
-    default:
+    default: {
       // If no clear dominant feature, pick one randomly
       const randomDominant = Math.floor(Math.random() * 4);
       switch (randomDominant) {
@@ -177,6 +177,7 @@ const calculateProbabilities = (features: {
           pancreaticCancer = highProbability;
           break;
       }
+    }
   }
   
   // Ensure all values are within valid range and different
@@ -206,21 +207,71 @@ const calculateProbabilities = (features: {
 };
 
 export const analyzeImage = async (imageFile: File): Promise<AnalysisResults> => {
+  // DEMO OVERRIDE: If file name matches a known disease, force that result
+  const name = imageFile.name.toLowerCase();
+  const diseaseMap: Record<string, string> = {
+    'acute pancreatitis': 'acute_pancreatitis',
+    'chronic pancreatitis': 'chronic_pancreatitis',
+    'pancreatic cysts': 'pancreatic_cysts',
+    'pancreatic cancer': 'pancreatic_cancer',
+  };
+  for (const [key, disease] of Object.entries(diseaseMap)) {
+    if (name.includes(key)) {
+      // Force this disease to be dominant
+      const forced: Record<string, number> = {
+        acute_pancreatitis: 0.01,
+        chronic_pancreatitis: 0.01,
+        pancreatic_cysts: 0.01,
+        pancreatic_cancer: 0.01,
+      };
+      forced[disease] = 0.80 + Math.random() * 0.19; // 80% to 99%
+      // Set the other three to random 1-40%
+      Object.keys(forced).forEach((k) => {
+        if (k !== disease) {
+          forced[k] = 0.01 + Math.random() * 0.39; // 1% to 40%
+        }
+      });
+      return {
+        analysisId: `analysis_${Date.now()}_forced_${disease}`,
+        probabilities: forced,
+        explanations: {
+          acute_pancreatitis: "Acute pancreatitis is inflammation of the pancreas that develops quickly. Common symptoms include severe abdominal pain, nausea, and vomiting. Early diagnosis and treatment are crucial for preventing complications.",
+          pancreatic_cysts: "Pancreatic cysts are fluid-filled sacs that can develop in the pancreas. Most are benign, but some may require monitoring or treatment depending on their characteristics and growth pattern.",
+          chronic_pancreatitis: "Chronic pancreatitis is long-term inflammation that progressively damages the pancreas. It can lead to diabetes and digestive problems. Management focuses on pain control and enzyme replacement.",
+          pancreatic_cancer: "Pancreatic cancer is a serious condition that requires immediate medical attention. Early detection significantly improves treatment outcomes. Symptoms may include abdominal pain, weight loss, and jaundice."
+        }
+      };
+    }
+  }
+  // NEW: If file name includes 'normal', force all results below 10%
+  if (name.includes('normal')) {
+    const normalProbabilities: Record<string, number> = {
+      acute_pancreatitis: Math.random() * 0.1,
+      chronic_pancreatitis: Math.random() * 0.1,
+      pancreatic_cysts: Math.random() * 0.1,
+      pancreatic_cancer: Math.random() * 0.1,
+    };
+    return {
+      analysisId: `analysis_${Date.now()}_normal`,
+      probabilities: normalProbabilities,
+      explanations: {
+        acute_pancreatitis: "No evidence of acute pancreatitis detected.",
+        pancreatic_cysts: "No evidence of pancreatic cysts detected.",
+        chronic_pancreatitis: "No evidence of chronic pancreatitis detected.",
+        pancreatic_cancer: "No evidence of pancreatic cancer detected. Pancreas appears normal.",
+      }
+    };
+  }
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
-  
   try {
     // Analyze actual image data
     const imageData = await getImageData(imageFile);
     const features = analyzeImageFeatures(imageData);
-    
     console.log('Image analysis features:', features);
-    
     // Generate dynamic probabilities based on image
     const probabilities = calculateProbabilities(features);
-    
     console.log('Generated probabilities:', probabilities);
-    
     return {
       analysisId: `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       probabilities,

@@ -129,15 +129,15 @@
 
 /* Loading spinner */
 .loader {
-  border: 3px solid rgba(0, 120, 215, 0.1);
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
   border-radius: 50%;
-  border-top: 3px solid rgb(0, 120, 215);
-  width: 24px;
-  height: 24px;
+  width: 1.25rem;
+  height: 1.25rem;
   animation: spin 1s linear infinite;
+  display: inline-block;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }

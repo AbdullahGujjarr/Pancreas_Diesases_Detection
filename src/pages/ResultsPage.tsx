@@ -270,7 +270,14 @@ const ResultsPage: React.FC = () => {
                   <h3 className="font-medium text-gray-800 mb-2">
                     {formatDiseaseName(highestProbDisease[0] as string)}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p
+                    className={`text-sm leading-relaxed font-bold ${
+                      // If all probabilities are below 0.1, show green bold text
+                      Object.values(results?.probabilities || {}).every((p) => (p as number) < 0.1)
+                        ? 'text-green-700'
+                        : 'text-gray-600'
+                    }`}
+                  >
                     {results.explanations[highestProbDisease[0] as string]}
                   </p>
                 </div>

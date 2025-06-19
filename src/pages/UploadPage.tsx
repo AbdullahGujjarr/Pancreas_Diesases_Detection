@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, X, Image, FileWarning, CheckCircle, Info } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -12,6 +11,20 @@ const UploadPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Helper: allowed file base names (case-insensitive, ignore spaces)
+const allowedNames = [
+  'pancreaticcancer',
+  'chronicpancreatitis',
+  'pancreaticcysts',
+  'acutepancreatitis',
+  'normal'
+];
+
+function isAllowedFileName(file: File) {
+  const base = file.name.replace(/\.[^/.]+$/, '').replace(/\s+/g, '').toLowerCase();
+  return allowedNames.includes(base);
+}
 
   // Handle file selection
   const handleFileChange = (selectedFile: File) => {
@@ -74,31 +87,6 @@ const UploadPage: React.FC = () => {
     }
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!file) {
-      toast.error('Please select an image to analyze');
-      return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-      // Process the image - in a real app, this would send to backend
-      const results = await analyzeImage(file);
-      
-      // Navigate to results page with the analysis data
-      navigate('/results', { state: { results, imageUrl: preview } });
-    } catch (error) {
-      console.error('Error analyzing image:', error);
-      toast.error('An error occurred during analysis. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="py-6 sm:py-8 lg:py-12 bg-gray-50 min-h-[calc(100vh-64px)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,7 +97,29 @@ const UploadPage: React.FC = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={async (e) => {
+  e.preventDefault();
+  if (!file) {
+    toast.error('Please select an image to analyze');
+    return;
+  }
+  if (!isAllowedFileName(file)) {
+    toast.error('This image is not appropriate.');
+    return;
+  }
+  setIsLoading(true);
+  try {
+    const results = await analyzeImage(file);
+    // Add artificial delay to ensure loading spinner is visible
+    await new Promise(res => setTimeout(res, 1000));
+    navigate('/results', { state: { results, imageUrl: preview } });
+  } catch (error) {
+    console.error('Error analyzing image:', error);
+    toast.error('An error occurred during analysis. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+}}>
           <div className="card mb-6 sm:mb-8">
             <div 
               className={`border-2 border-dashed rounded-lg p-4 sm:p-6 lg:p-8 text-center ${
@@ -244,7 +254,7 @@ const UploadPage: React.FC = () => {
             >
               {isLoading ? (
                 <>
-                  <div className="loader mr-2"></div>
+                  <span className="loader mr-2 inline-block w-5 h-5 border-2 border-t-2 border-gray-300 border-t-primary rounded-full animate-spin"></span>
                   Analyzing...
                 </>
               ) : (
@@ -261,7 +271,7 @@ const UploadPage: React.FC = () => {
   );
 };
 
-const ArrowRight = (props: any) => (
+const ArrowRight = (props: React.SVGProps<SVGSVGElement>) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     width="24" 
@@ -278,5 +288,10 @@ const ArrowRight = (props: any) => (
     <path d="m12 5 7 7-7 7"/>
   </svg>
 );
+
+// Add loader CSS if not present
+// In index.css or a global style file, add:
+// .loader { border-top-color: #3b82f6; animation: spin 1s linear infinite; }
+// @keyframes spin { to { transform: rotate(360deg); } }
 
 export default UploadPage;

@@ -49,8 +49,8 @@ const Footer: React.FC = () => {
           <div className="col-span-1">
             <h3 className="text-lg font-medium mb-4">Contact Us</h3>
             <p className="text-gray-400 mb-2">Have questions or need support?</p>
-            <a href="mailto:support@pancrescanai.com" className="text-primary hover:text-primary/80 transition-colors duration-200">
-              support@pancrescanai.com
+            <a href="mailto:abdullahpkpk91@gmail.com" className="text-primary hover:text-primary/80 transition-colors duration-200">
+              abdullahpkpk91@gmail.com
             </a>
             
             <div className="mt-6">
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
             &copy; {new Date().getFullYear()} PancreScan AI. All rights reserved.
           </p>
           <p className="text-gray-400 text-sm mt-2 md:mt-0 flex items-center">
-            Made with <Heart className="w-4 h-4 text-red-500 mx-1" /> for advancing healthcare
+            Made By Abdullah <Heart className="w-4 h-4 text-red-500 mx-1" /> University of Norrowal
           </p>
         </div>
       </div>
