@@ -124,9 +124,6 @@ curl -X POST "http://localhost:8000/predict/" -F "file=@samples/Pancreatic\ Canc
 ---
 
 ## License
-
 For educational and research use only.
 
----
 
-You can now copy and paste this into your `README.md` or any documentation box!
