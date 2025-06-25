@@ -157,6 +157,9 @@ const ResultsPage: React.FC = () => {
     }
   };
 
+ 
+  const isNormalImage = typeof results.analysisId === 'string' && results.analysisId.toLowerCase().includes('normal');
+
   return (
     <div className="bg-gray-50 min-h-[calc(100vh-64px)] py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -239,18 +242,24 @@ const ResultsPage: React.FC = () => {
                 <div className="space-y-4">
                   <HeatmapViewer 
                     originalImage={imageUrl} 
-                    showHeatmap={showHeatmap}
+                    showHeatmap={showHeatmap && !isNormalImage}
                   />
-                  <button
-                    onClick={() => setShowHeatmap(!showHeatmap)}
-                    className={`w-full px-4 py-2 text-sm rounded-lg font-medium transition-colors duration-200 ${
-                      showHeatmap 
-                        ? 'bg-gray-200 text-gray-800' 
-                        : 'bg-primary text-white hover:bg-primary/90'
-                    }`}
-                  >
-                    {showHeatmap ? 'Hide Analysis Overlay' : 'Show Analysis Overlay'}
-                  </button>
+                  {!isNormalImage ? (
+                    <button
+                      onClick={() => setShowHeatmap(!showHeatmap)}
+                      className={`w-full px-4 py-2 text-sm rounded-lg font-medium transition-colors duration-200 ${
+                        showHeatmap 
+                          ? 'bg-gray-200 text-gray-800' 
+                          : 'bg-primary text-white hover:bg-primary/90'
+                      }`}
+                    >
+                      {showHeatmap ? 'Hide Analysis Overlay' : 'Show Analysis Overlay'}
+                    </button>
+                  ) : (
+                    <div className="w-full px-4 py-2 text-sm rounded-lg font-medium bg-green-100 text-green-700 text-center border border-green-300">
+                      No heatmap is shown for normal scans.
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
