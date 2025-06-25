@@ -45,6 +45,11 @@ const ResultsPage: React.FC = () => {
       ['', 0]
     );
 
+  // Determine the most likely disease (not 'normal')
+  let mainDisease = Object.entries(results.probabilities)
+    .filter(([disease]) => disease !== 'normal')
+    .sort((a, b) => (b[1] as number) - (a[1] as number))[0]?.[0] || '';
+
   // Generate detailed analysis message
   const generateAnalysisMessage = () => {
     const sortedResults = Object.entries(results.probabilities)
@@ -243,6 +248,7 @@ const ResultsPage: React.FC = () => {
                   <HeatmapViewer 
                     originalImage={imageUrl} 
                     showHeatmap={showHeatmap && !isNormalImage}
+                    diseaseType={!isNormalImage ? mainDisease : undefined}
                   />
                   {!isNormalImage ? (
                     <button

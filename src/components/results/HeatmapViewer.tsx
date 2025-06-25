@@ -1,14 +1,15 @@
-
 import React, { useEffect, useRef } from 'react';
 
 interface HeatmapViewerProps {
   originalImage: string;
   showHeatmap: boolean;
+  diseaseType?: string; // NEW: pass disease type
 }
 
 const HeatmapViewer: React.FC<HeatmapViewerProps> = ({ 
   originalImage, 
-  showHeatmap
+  showHeatmap,
+  diseaseType // NEW
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const originalImageRef = useRef<HTMLImageElement | null>(null);
@@ -74,34 +75,36 @@ const HeatmapViewer: React.FC<HeatmapViewerProps> = ({
     width: number, 
     height: number
   ) => {
-    // Target the specific pancreatic region based on the image
-    const pancreaticRegion = {
-      x: Math.floor(width * 0.45),    // Adjusted to target center-right area
-      y: Math.floor(height * 0.35),    // Adjusted to target upper-middle area
-      width: Math.floor(width * 0.2),  // Reduced width for more precise targeting
-      height: Math.floor(height * 0.15) // Reduced height for more precise targeting
-    };
-    
-    // Calculate the center point for the heatmap
-    const centerX = pancreaticRegion.x + (pancreaticRegion.width / 2);
-    const centerY = pancreaticRegion.y + (pancreaticRegion.height / 2);
-    
-    // Create a smaller, more focused radius for the highlight
+    // NEW: Different heatmap region for each disease
+    let region;
+    switch (diseaseType) {
+      case 'acute_pancreatitis':
+        region = { x: width * 0.2, y: height * 0.3, w: width * 0.18, h: height * 0.18 };
+        break;
+      case 'chronic_pancreatitis':
+        region = { x: width * 0.6, y: height * 0.5, w: width * 0.18, h: height * 0.18 };
+        break;
+      case 'pancreatic_cysts':
+        region = { x: width * 0.35, y: height * 0.7, w: width * 0.18, h: height * 0.18 };
+        break;
+      case 'pancreatic_cancer':
+        region = { x: width * 0.55, y: height * 0.2, w: width * 0.18, h: height * 0.18 };
+        break;
+      default:
+        // fallback (center)
+        region = { x: width * 0.45, y: height * 0.35, w: width * 0.2, h: height * 0.15 };
+    }
+    const centerX = region.x + region.w / 2;
+    const centerY = region.y + region.h / 2;
     const radius = Math.min(width, height) * 0.1;
-    
-    // Create gradient for smooth highlight effect
     const gradient = ctx.createRadialGradient(
       centerX, centerY, 0,
       centerX, centerY, radius
     );
-    
-    // Use higher opacity values for better visibility
-    gradient.addColorStop(0, 'rgba(220, 38, 38, 0.95)');    // Core: stronger red
-    gradient.addColorStop(0.3, 'rgba(220, 38, 38, 0.85)');  // Inner: high opacity
-    gradient.addColorStop(0.6, 'rgba(220, 38, 38, 0.75)');  // Middle: medium opacity
-    gradient.addColorStop(1, 'rgba(220, 38, 38, 0)');       // Edge: fade to transparent
-
-    // Draw the highlight
+    gradient.addColorStop(0, 'rgba(220, 38, 38, 0.95)');
+    gradient.addColorStop(0.3, 'rgba(220, 38, 38, 0.85)');
+    gradient.addColorStop(0.6, 'rgba(220, 38, 38, 0.75)');
+    gradient.addColorStop(1, 'rgba(220, 38, 38, 0)');
     ctx.save();
     ctx.fillStyle = gradient;
     ctx.beginPath();
